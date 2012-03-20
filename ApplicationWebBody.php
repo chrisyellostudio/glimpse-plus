@@ -1,15 +1,11 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * 
+ *
+ * @author cir8
  */
 
-/**
- * Description of ApplicationWebBody
- *
- * @author MSI
- */
 class ApplicationWebBody {
     public $currentBranch;
     public $breadArray;
@@ -18,11 +14,14 @@ class ApplicationWebBody {
     public $rightTitle;
     public $rightContentLinks;
     public $leftTitle;
-    public $leftContent;
+    public $leftContent;    
     
-    public function __construct($ttitle, $bodyContent) {
-        $t = $this->bodytitle;
-        $cB = $this->bodyContent;
+    /*
+     * Basic constructor for the application web body object.
+     */
+    public function __construct($title, $bodyContent) {
+        $title = $this->bodytitle;
+        $bodyContent = $this->bodyContent;
     }
     
     public function setCurrentBranch($branch){
@@ -48,6 +47,45 @@ class ApplicationWebBody {
     public function getBodyTitle(){
         return $this->bodyTitle;
     }
+    
+    public function setBodyContents($content){
+        $this->bodyContent = $content;
+    }
+    
+    public function getBodyContents(){
+        return $this->bodyContent;
+    }
+    
+    public function setRightTitle($title){
+        $this->rightTitle = $title;
+    }
+    
+    public function getRightTitle(){
+        return $this->rightTitle;
+    }
+    
+    public function setRightContentLinks($links){
+        $this->rightContentLinks = $links;
+    }
+    
+    public function getRightContentLinks(){
+        return $this->rightContentLinks;
+    }
+    
+    public function setLeftTitle($title){
+        $this->leftTitle = $title;
+    }
+    
+    public function getLeftTitle(){
+        return $this->leftTitle;
+    }
+    
+    public function setLeftContent($content){
+        $this->leftContent = $content;
+    }
+    
+    public function getLeftContent(){
+        return $this->leftContent;
+    }
 }
-
 ?>

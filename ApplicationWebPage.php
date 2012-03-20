@@ -10,10 +10,10 @@ define("APPLICATION_TITLE", APPLICATION_HEADER . " :: ");
 define("DEFAULT_STYLE", 'styles.css');
 
 class ApplicationWebPage {
-
+   
     public function __construct() {
         $this->head($title, $styleArray, $script);
-        $this->body($navbranch, $breadArray);
+        $this->body($bodyObject);
         $this->footer();
     }
 
@@ -72,20 +72,20 @@ class ApplicationWebPage {
         return $breadcrumbs;
     }
 
-    public function body($currentBranch, $breadArray, $bodytitle, $bodycontent, $righttitle, $rightcontentlinks) {
+    public function body($bodyObject) {
         $body = '';
         $body .= '<header>
                 <h1>' . APPLICATION_HEADER . '</h1>
               </header>';
-        echo $this->navigation($currentBranch);
-        echo $this->breadcrumbs($breadArray);
+        echo $this->navigation($bodyObject->currentBranch);
+        echo $this->breadcrumbs($bodyObject->breadArray);
         echo '<div id="contentWrapper">';
-        echo $this->leftSidebar($title, $contentLinks);
+        echo $this->leftSidebar($bodyObject->leftTitle, $bodyObject->leftContent);
         echo '<section class="content">
                     <h1>' . $title . '</h1>       
                         ' . $content . '
                 </section>';
-        echo $this->rightSidebar($title, $contentLinks);
+        echo $this->rightSidebar($bodyObject->rightTitle, $bodyObject->rightContentLinks);
         echo'</div> ';
     }
 
