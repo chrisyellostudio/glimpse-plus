@@ -13,7 +13,7 @@ class ApplicationWebPage {
 
     public function __construct() {
         $this->head($title, $styleArray, $script);
-        $this->body();
+        $this->body($navbranch, $breadArray);
         $this->footer();
     }
 
@@ -59,6 +59,8 @@ class ApplicationWebPage {
                     <li><a ' . $acc . 'href="account.php">My Account</a></li>
                 </ul>
              </nav>';
+        
+        return $nav;
     }
 
     public function breadcrumbs($breadArray) {
@@ -70,15 +72,16 @@ class ApplicationWebPage {
         return $breadcrumbs;
     }
 
-    public function body($title, $content) {
+    public function body($currentBranch, $breadArray, $bodytitle, $bodycontent, $righttitle, $rightcontentlinks) {
         $body = '';
         $body .= '<header>
                 <h1>' . APPLICATION_HEADER . '</h1>
               </header>';
-        echo $this->navigation($breadArray);
-        echo $this->breadcrumbs();
-        echo '<div id="contentWrapper">
-                <section class="content">
+        echo $this->navigation($currentBranch);
+        echo $this->breadcrumbs($breadArray);
+        echo '<div id="contentWrapper">';
+        echo $this->leftSidebar($title, $contentLinks);
+        echo '<section class="content">
                     <h1>' . $title . '</h1>       
                         ' . $content . '
                 </section>';
@@ -86,39 +89,39 @@ class ApplicationWebPage {
         echo'</div> ';
     }
 
-    public function leftSidebar($title, $contentLinks) {
-        $leftSide = '';
-        $leftSide .= '<sidebar>
+    public function rightSidebar($title, $contentLinks) {
+        $rightSide = '';
+        $rightSide .= '<sidebar>
                 <section>
                     <header><h1>' . $title . '</h1></header>
                     <ul>
                     ';
         foreach ($contentLinks as $link => $value) {
-            $leftSide .= '<li><a href="' . $link . '">' . $value . '</a></li>';
+            $rightSide .= '<li><a href="' . $link . '">' . $value . '</a></li>';
         }
-        $leftSide .= '</ul>
-                </section>
-             </sidebar>';
-
-        return $leftSide;
-    }
-
-    public function rightSidebar($title, $content) {
-        $rightSide = '';
-        $rightSide .= '<sidebar>
-                <section>
-                    <header><h1>' . $title . '</h1></header>
-                    ' . $content . '
+        $rightSide .= '</ul>
                 </section>
              </sidebar>';
 
         return $rightSide;
     }
 
+    public function leftSidebar($title, $content) {
+        $leftSide = '';
+        $leftSide .= '<sidebar>
+                <section>
+                    <header><h1>' . $title . '</h1></header>
+                    ' . $content . '
+                </section>
+             </sidebar>';
+
+        return $leftSide;
+    }
+
     public function footer() {
         $footer = '';
         $footer .= '<footer>
-                <p> Copyright &copy; Chris Rees 2012</p>
+                <p> GLimPSE is Copyright &copy; Chris Rees 2012</p>
               </footer>';
 
         return $footer;
