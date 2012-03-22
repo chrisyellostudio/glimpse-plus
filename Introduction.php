@@ -23,9 +23,9 @@ class Introduction {
         $body->setRightContentLinks($links);
         
         $page = new ApplicationWebPage();
-        $page->head('Introduction','styles','');
-        $page->body($body);
-        $page->footer();
+        echo $page->head('Introduction','styles','');
+        echo $page->body($body);
+        echo $page->footer();
     }
 }
 

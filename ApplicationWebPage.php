@@ -72,16 +72,18 @@ class ApplicationWebPage {
         $body .= '<header>
                 <h1>' . APPLICATION_HEADER . '</h1>
               </header>';
-        echo $this->navigation($bodyObject->getCurrentBranch());
-        echo $this->breadcrumbs($bodyObject->getbreadArray());
-        echo '<div id="contentWrapper">';
-        echo $this->leftSidebar($bodyObject->getLeftTitle(), $bodyObject->getLeftContent());
-        echo '<section class="content">
+        $body .= $this->navigation($bodyObject->getCurrentBranch());
+        $body .= $this->breadcrumbs($bodyObject->getbreadArray());
+        $body .= '<div id="contentWrapper">';
+        $body .= $this->leftSidebar($bodyObject->getLeftTitle(), $bodyObject->getLeftContent());
+        $body .= '<section class="content">
                     <h1>' . $bodyObject->getBodyTitle() . '</h1>       
                         ' . $bodyObject->getBodyContents() . '
                 </section>';
-        echo $this->rightSidebar($bodyObject->getRightTitle(), $bodyObject->getRightContentLinks());
-        echo'</div> ';
+        $body .= $this->rightSidebar($bodyObject->getRightTitle(), $bodyObject->getRightContentLinks());
+        $body .='</div> ';
+        
+        return $body;
     }
 
     /*
@@ -111,13 +113,14 @@ class ApplicationWebPage {
 
     public function leftSidebar($title, $content) {
         $leftSide = '';
+        if($title || $content != ''){
         $leftSide .= '<sidebar>
                 <section>
                     <header><h1>' . $title . '</h1></header>
                     ' . $content . '
                 </section>
              </sidebar>';
-
+        }
         return $leftSide;
     }
 
@@ -126,6 +129,8 @@ class ApplicationWebPage {
         $footer .= '<footer>
                 <p> GLimPSE is Copyright &copy; Chris Rees 2012</p>
               </footer>';
+        $footer .= '</body>
+            </html>';
 
         return $footer;
     }
