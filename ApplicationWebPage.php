@@ -5,19 +5,14 @@
  *
  * @author cir8
  */
+
 define('APPLICATION_HEADER', 'GLimPSE');
 define("APPLICATION_TITLE", APPLICATION_HEADER . " :: ");
 define("DEFAULT_STYLE", 'styles.css');
 
 class ApplicationWebPage {
    
-    public function __construct() {
-        $this->head($title, $styleArray, $script);
-        $this->body($bodyObject);
-        $this->footer();
-    }
-
-    public function head($title, $styleArray, $script) {
+    public function head($title, $styleArray = '', $script = '') {
         $title = APPLICATION_TITLE . $title;
         $head = '';
         $head .= '<!doctype html>
@@ -25,7 +20,7 @@ class ApplicationWebPage {
                     <head>
                         <title>' . $title . '</title>
                         <link rel="stylesheet" href="html/' . DEFAULT_STYLE . '">';
-        if (sizeof($styleArray)) {
+        if (sizeof($styleArray)>1) {
             foreach ($styleArray as $style) {
                 $head .= '<link rel="stylesheet" href="html/' . $stlye . '">';
             }
@@ -35,7 +30,7 @@ class ApplicationWebPage {
         }
         $head .= '</head> ';
 
-        return $head;
+        echo $head;
     }
 
     public function navigation($currentBranch) {
@@ -60,7 +55,7 @@ class ApplicationWebPage {
                 </ul>
              </nav>';
         
-        return $nav;
+        echo $nav;
     }
 
     public function breadcrumbs($breadArray) {
@@ -72,23 +67,31 @@ class ApplicationWebPage {
         return $breadcrumbs;
     }
 
-    public function body($bodyObject) {
+    public function body(ApplicationWebBody $bodyObject) {
         $body = '';
         $body .= '<header>
                 <h1>' . APPLICATION_HEADER . '</h1>
               </header>';
-        echo $this->navigation($bodyObject->currentBranch);
-        echo $this->breadcrumbs($bodyObject->breadArray);
+        echo $this->navigation($bodyObject->getCurrentBranch());
+        echo $this->breadcrumbs($bodyObject->getbreadArray());
         echo '<div id="contentWrapper">';
-        echo $this->leftSidebar($bodyObject->leftTitle, $bodyObject->leftContent);
+        echo $this->leftSidebar($bodyObject->getLeftTitle(), $bodyObject->getLeftContent());
         echo '<section class="content">
-                    <h1>' . $title . '</h1>       
-                        ' . $content . '
+                    <h1>' . $bodyObject->getBodyTitle() . '</h1>       
+                        ' . $bodyObject->getBodyContents() . '
                 </section>';
-        echo $this->rightSidebar($bodyObject->rightTitle, $bodyObject->rightContentLinks);
+        echo $this->rightSidebar($bodyObject->getRightTitle(), $bodyObject->getRightContentLinks());
         echo'</div> ';
     }
 
+    /*
+     * Creates the right hand side bar on the web page.
+     * 
+     * @param string $title 
+     * @param array $contentLinks
+     * @return string $rightSide
+     *      Returns a string containing the html for the sidebar
+     */
     public function rightSidebar($title, $contentLinks) {
         $rightSide = '';
         $rightSide .= '<sidebar>

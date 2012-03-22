@@ -20,10 +20,15 @@ class ApplicationWebBody {
      * Basic constructor for the application web body object.
      */
     public function __construct($title, $bodyContent) {
-        $title = $this->bodytitle;
-        $bodyContent = $this->bodyContent;
+        $title = $this->setBodyTitle($title);
+        $bodyContent = $this->setBodyContents($bodyContent);
     }
     
+    /*
+     * Sets current branch in the web structure.
+     * 
+     * @param string branch
+     */
     public function setCurrentBranch($branch){
         $this->currentBranch = $branch;
     }
