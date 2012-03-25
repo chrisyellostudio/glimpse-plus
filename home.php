@@ -10,25 +10,24 @@
 include 'ApplicationWebBody.php';
 include 'ApplicationWebPage.php';
 
-class Introduction {
+class home {
 
     public static function createPage(){        
-        $links = array('home.php'=>'Home','intro.php'=>'Introduction');
-        $bodyContent = 'I like pandas';
+        $links = array('intro.php'=>'Introduction',
+            'tour.php'=> 'Guided Tour');
+        $currentLocation = array('home.php'=>'Home');
+        $bodyContent = '';
         
-        $body = new ApplicationWebBody('Introduction',$bodyContent);
+        $body = new ApplicationWebBody('Home',$bodyContent);
         $body->setCurrentBranch('home');
-        $body->setbreadArray(array('Home','Introduction'));
-        $body->setRightTitle('Introduction');
+        $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
         
         $page = new ApplicationWebPage();
-        echo $page->head('Introduction','styles','');
+        echo $page->head('Home');
         echo $page->body($body);
         echo $page->footer();
     }
 }
 
-Introduction::createPage();
-
-?>
+home::createPage();

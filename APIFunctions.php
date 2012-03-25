@@ -5,12 +5,12 @@
  */
 
 class APIFunctions {
-    /*
+
+    /**
      * Pretty much the overwriting of the fopens method
      * additionally it handles the parsing of the returned
      * JSON object, default read mode is 'rb'.
      */
-
     public function fetchJSONObject($url, $mode = 'rb') {
         $handle = fopen($url, $mode);
         $body = '';
@@ -22,13 +22,12 @@ class APIFunctions {
         return json_decode($body);
     }
 
-    /*
+    /**
      * Builds the API URL for passing into the fetcher for the JSON feed.
      * 
      * @params $s, $c, $form
      * @returns string
      */
-
     public function buildAPIURL($s = '', $c = 'GB', $form = 'json', $startIndex = 1, $maxResults = 25) {
         $APIkey = 'AIzaSyAgkxANYayzTupDm-0JH-e7hgKljqyrx7E';
 
@@ -44,21 +43,19 @@ class APIFunctions {
         return $url . $key . $country . $query . $format;
     }
 
-    /*
+    /**
      * 
      */
-
     function errorObjectHandler() {
         
     }
 
-    /*
+    /**
      * Checks images source
      */
-
     public function parseImages($link) {
         $img_na = 'html/src/no_image.jpg';
-        if ($this->parseURL($link) < 400) {
+        if ($this->parseURL($link) <= 202) {
             $img = $link;
         } else {
             $img = $img_na;
@@ -66,10 +63,9 @@ class APIFunctions {
         return $img;
     }
 
-    /*
+    /**
      * Resizes the image to standard ratios
      */
-
     public function imageResize($obj, $limit) {
         $link = $obj->link;
         $img_link = $this->parseImages($link);
@@ -81,10 +77,9 @@ class APIFunctions {
         return $img;
     }
 
-    /*
+    /**
      * Creates an image gallery for the 
      */
-
     public function createProductGallery($obj) {
         $image_not_found_src = 'src/no_image.jpg';
         $gallery = '<div class="images">';
@@ -93,13 +88,13 @@ class APIFunctions {
 
         if (sizeof($obj) == 1) {
             $gallery .= '<ul id="image-view">
-                                <li id="' . $id . '"><img src="' . $obj->link . '" height="200px" width="200px"/></li>
+                                <li id="' . $image_id . '"><img src="' . $obj->link . '" height="200px" width="200px"/></li>
                             </ul>
                       </div>';
         } elseif (sizeof($obj) > 1) {
             $gallery .= '<ul id="image-view">';
             foreach ($obj as $res) {
-                $gallery .= '<li id="' . $i . '"><img src="' . $obj->link . '" height="200px" width="200px"/></li>';
+                $gallery .= '<li id="' . $image_id . '"><img src="' . $obj->link . '" height="200px" width="200px"/></li>';
                 $image_id++;
             }
             $gallery .= '</ul>';
@@ -112,7 +107,7 @@ class APIFunctions {
             $gallery .= '</ul>';
         } else {
             $gallery .= '<ul id="image-view">
-                                <li id="' . $id . '"><img src="' . $image_not_found_src . '" height="200px" width="200px"/></li>
+                                <li id="' . $image_id . '"><img src="' . $image_not_found_src . '" height="200px" width="200px"/></li>
                             </ul>
                       </div>';
         }
@@ -123,22 +118,24 @@ class APIFunctions {
 
     public function parseJSONObject($obj) {
         $content = '';
-        $content .= $obj->currentItemCount . ' out of ' . $obj->totalItems . ' items.';
+        $query = $_POST['searchquery'];
+        $content = '<span class="faded left"> Results for: "' . $query . '" </span>';
+        $content .= '<span class="right"><b>' . $obj->startIndex . '</b> to <b>' . $obj->itemsPerPage . '</b> out of <b class="red">' . $obj->totalItems . '</b> items.</span>';
         $content .= '<br/>';
         foreach ($obj->items as $result) {
-            $content .= '<div class="Item">';
-            if (count($result->product->images) > 1) {
+            $content .= '<div class="item">';
+            if (count($result->product->images) == 1) {
                 foreach ($result->product->images as $res) {
-                    $content .= $this->imageResize($res, 100);
+                    $content .= '<img src="' . $this->parseImages($res->link) . '" height="100px"/>';
                 }
             } else {
                 foreach ($result->product->images as $res) {
-                    $content .= $this->imageResize($res, 100);
+                    $content .= '<img src="' . $this->parseImages($res->link) . '" height="100px"/>';
+                    //$content .= $this->imageResize($res, 100);
                 }
             }
-            $content .= '<h3><a target="_blank" href="' . $result->product->link . '">' . $result->product->title . '</a></h3>';
-            $content .= '<p>' . $this->shortenDescription($result->product->description) . '</p>';
-            $content .= '<br/><hr><br/>';
+            $content .= '<h3>' . ApplicationFunctions::shortenText($result->product->title, 60) . '</h3>';
+            $content .= '<p>' . ApplicationFunctions::shortenText($result->product->description, 400) . '</p>';
             $content .= '</div>';
         }
         return $content;
@@ -152,7 +149,7 @@ class APIFunctions {
         $desc = '';
         if (strlen($s) > 100) {
             $desc = substr($s, 0, 100);
-            $desc .= ' ... <a href="#">Read More</a>';
+            $desc .= ' ...  <a href="#">Read More</a>';
         } else {
             $desc = $s;
         }
@@ -168,8 +165,9 @@ class APIFunctions {
 
     function parseURL($s) {
         $url_header = @get_headers($s);
-
-        if ($url_header[0] == 'HTTP/1.1 400 Bad Request') {
+        if ($url_header[0] == 'HTTP/1.1 202 Accepted') {
+            return 202;
+        } elseif ($url_header[0] == 'HTTP/1.1 400 Bad Request') {
             return 400;
         } elseif ($url_header[0] == 'HTTP/1.1 401 Unauthorized') {
             return 401;
