@@ -5,70 +5,39 @@
  *
  * @author cir8
  */
+
+include 'ApplicationWebBody.php';
+include 'ApplicationWebPage.php';
+include 'APIFunctions.php';
+
 class login {
 
-    public function __construct($content) {
-        $this->head('GLimPSE :: Login');
-        $this->body('Login', $content);
-        $this->footer();
-    }
+        public static function logmein() {
+        $s = new APIFunctions();
+        $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
+        $currentLocation = array('account.php' => 'My Account', 'account.php?login' => 'Login');
+        $bodyContent = '<form method="post" action="account.php">
+                    <div class="login">
+                        <input type="text" autocomplete=off size="30" maxlength="255" required="true" autofocus="true" name="user"/> 
+                        <br/>
+                        <input type="password" size="30" required="true" name="password"/>
+                        <br/>
+                        <input type="submit" value="Login" /><br/>
+                    </div>
+                </form>';
 
-    public function head($title) {
-        echo '<!doctype html>
-                <html>
-                    <head>
-                        <title>' . $title . '</title>
-                        <link rel="stylesheet" href="html/styles.css">
-                    </head> ';
-    }
+        $body = new ApplicationWebBody('Login', $bodyContent);
+        $body->setCurrentBranch('account');
+        $body->setbreadArray($currentLocation);
+        $body->setRightContentLinks($links);
 
-    public function navigation() {
-        echo '<nav>
-                <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="about.php">About</a></li>
-                    <li><a href="search.php">Search</a></li>
-                    <li><a class="selected" href="my_account.php">My Account</a></li>
-                </ul>
-             </nav>';
-    }
-
-    public function body($title, $content) {
-        echo '<header>
-                <h1>GLimPSE</h1>
-              </header>';
-        echo $this->navigation();
-        echo $this->breadcrumbs();
-        echo '<div id="contentWrapper">
-                <section class="content">
-                    <h1>' . $title . '</h1>       
-                        ' . $content . '
-                </section>';
-        echo $this->sidebar('Login');
-        echo'</div> ';
-    }
-
-    public function breadcrumbs() {
-        echo '<div class="currentlocation">
-                <p>My Account > Login</p>
-              </div>';
-    }
-    
-    public function sidebar($title) {
-        echo '<sidebar>
-                <section>
-                    <header><h1>' . $title . '</h1></header>
-                    <ul>
-                        <li><a href="my_account.php">My Account</a></li>
-                    </ul>
-                </section>
-             </sidebar>';
-    }
-    public function footer() {
-        echo '<footer>
-                <p> Copyright &copy; Chris Rees 2012</p>
-              </footer>';
+        $page = new ApplicationWebPage();
+        echo $page->head('Login');
+        echo $page->body($body);
+        echo $page->footer();
     }
 }
+
+login::logmein();
 
 ?>
