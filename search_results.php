@@ -33,7 +33,7 @@ class searchresults {
     }
 
 }
-
+session_start();
 if ($_POST['searchquery'] == '') {
     header('Location: search.php');
 } else {

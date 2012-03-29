@@ -29,5 +29,5 @@ class home {
         echo $page->footer();
     }
 }
-
+session_start();
 home::createPage();

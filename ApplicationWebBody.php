@@ -20,8 +20,8 @@ class ApplicationWebBody {
      * Basic constructor for the application web body object.
      */
     public function __construct($title, $bodyContent) {
-        $title = $this->setBodyTitle($title);
-        $bodyContent = $this->setBodyContents($bodyContent);
+        $this->setBodyTitle($title);
+        $this->setBodyContents($bodyContent);
     }
     
     /*

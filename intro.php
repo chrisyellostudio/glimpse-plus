@@ -38,7 +38,7 @@ class intro {
         echo $page->footer();
     }
 }
-
+session_start();
 intro::createPage();
 
 ?>

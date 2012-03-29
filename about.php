@@ -30,5 +30,5 @@ class about {
         echo $page->footer();
     }
 }
-
+session_start();
 about::createPage();

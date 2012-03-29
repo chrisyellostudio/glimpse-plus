@@ -6,29 +6,30 @@
  * @author RIF01
  */
 class AccountFunctions {
-    
+
     public $user = '';
-    
-    public static function checkIfUserSet(){
-        if(isset($_GET['user']) == 1){
+
+    public static function checkIfUserSet() {
+        if (isset($_GET['user']) == 1) {
             return TRUE;
         } else {
-            return FALSE;            
-            }
+            return FALSE;
         }
-        
-    public static function displayUser(){
+    }
+
+    public static function displayUser() {
         $user = '';
-        if(isset($_GET['user']) == 1){
-            $user .= '<span class="right userinfo"><a href="my_account.php">'.$_POST['user'].'</a>
-                | <a href="my_account.php?logout">Logout</a>';
+        if (isset($_SESSION['user'])) {
+            $user .= '<span class="right">Welcome<a href="account.php">' . $_SESSION['user'] . '</a>
+                | <a href="account.php?logout">Logout</a>';
         } else {
-            $user .= '<span class="right userinfo"><a href="my_account.php?login"> Login </a></span><br/>';
+            $user .= '<span class="right"><a href="login.php">Login</a>
+                &nbsp;&nbsp;<a href="register.php">Register</a></span>';
         }
-        
+
         return $user;
     }
-    
+
 }
 
 ?>

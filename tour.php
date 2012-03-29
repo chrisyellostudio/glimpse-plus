@@ -28,5 +28,5 @@ class tour {
         echo $page->footer();
     }
 }
-
+session_start();
 tour::createPage();

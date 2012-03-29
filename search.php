@@ -33,5 +33,5 @@ class search {
     }
 
 }
-
+session_start();
 search::createPage();

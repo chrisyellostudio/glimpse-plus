@@ -13,7 +13,7 @@ body {
     margin: 0 auto;
     width: 940px;
     font: 13px/22px Helvetica, Arial, sans-serif;
-    background: #f0f0f0;
+    background: #f4f4f4;
 }
 
 h2 {
@@ -48,15 +48,16 @@ nav ul {
 
 nav ul li {
     float: left;
+    width: 200px;
 
 }
 
 nav ul li a {
     display: block;
-    margin-right: 20px;
-    width: 140px;
-    font-size: 14px;
-    line-height: 44px;
+    line-height: 40px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 100;
     text-align: center;
     text-decoration: none;
     color: #000;
@@ -68,11 +69,19 @@ nav ul li a:hover {
     -webkit-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
+    background-color: #666;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
 }
 
 nav ul li.selected a{
     color: #FFF;
     font-weight: bold;
+    background-color: #666;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
 }
 
 
@@ -214,6 +223,7 @@ footer{
 }
 
 .content h1{
+    padding: 10px 0 10px 0;
     color: steelblue;
 }
 
@@ -451,7 +461,7 @@ hr {
     color: red;
 }
 
-sidebar{  
+sidebar {  
     display: block;
     padding-left: 20px;
     width: 200px;
@@ -523,4 +533,62 @@ sidebar li:hover{
 
 .left{
     float:left;
+}
+
+.title{
+    width: inherit;
+    display: table;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.title h1{
+    display: table-cell;
+}
+
+.title span{
+    width: auto;
+    font-size: 16px;
+    font-weight: normal;
+    display: table-cell;
+}
+
+.title span a{
+    font-weight: 900;
+    text-decoration: none;
+    color: #000;
+    text-align: center;
+    padding: 0 10px 0 10px;
+    display: inline-block;
+}
+
+.title span a:hover{
+    color: skyblue;
+    -moz-transition: all 5s ease-out;
+    -webkit-transition: all 5s ease-out;
+    -o-transition: all 5s ease-out;
+    transition: all 5s ease-out;
+}
+
+.login input {
+    margin: 10px 0 10px 0;
+}
+
+.label{
+    padding-right: 20px;
+}
+
+td.input{
+    padding: 5px 0 5px 0;
+}
+
+td.validation {
+    padding: 0 0 0 10px;
+    color: red;
+}
+
+#map_canvas {
+    height: 400px;
+    width: 600px;
+    margin-top: 0.6em;
 }

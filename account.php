@@ -15,13 +15,12 @@ class account {
         $s = new APIFunctions();
         $links = array('account.php?logout' => 'Logout', 'account.php?settings' => 'My Settings');
         $currentLocation = array('account.php' => 'My Account');
-        $bodyContent = 'Welcome: '. $_POST['user'];
+        $bodyContent = 'Welcome: ' . $_SESSION['user'];
 
         $body = new ApplicationWebBody('My Account', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
- 
-       $body->setRightContentLinks($links);
+        $body->setRightContentLinks($links);
 
         $page = new ApplicationWebPage();
         echo $page->head('My Account');
@@ -30,25 +29,21 @@ class account {
     }
 
     public static function logout() {
-        if (isset($_POST['user'])) {
-            unset($_POST['user']);
-            unset($_POST['password']);
-            header('Location: home.php');
-        } else {
-            header('Location: login.php');
-        }
+        unset($_SESSION['user']);
+        session_destroy();
+        header('Location: home.php');
     }
+
 }
-if(isset($_POST['user']) && isset($_POST['password'])){
+
+session_start();
+if (isset($_SESSION['user'])) {
     account::userpage();
-}
-if (isset($_GET['login'])) {
+} elseif (!isset($_SESSION['user'])) {
     header('Location: login.php');
-}
+} 
 if (isset($_GET['logout'])) {
     account::logout();
-} 
-if(isset($_POST['user']) == FALSE){
-  header('Location: login.php');   
 }
+
 ?>

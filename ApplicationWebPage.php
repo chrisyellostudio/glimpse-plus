@@ -5,7 +5,6 @@
  *
  * @author cir8
  */
-
 include 'ApplicationFunctions.php';
 include 'AccountFunctions.php';
 
@@ -15,7 +14,7 @@ define("DEFAULT_STYLE", 'styles.css');
 
 class ApplicationWebPage {
 
-    public function head($title, $styleArray = '', $script = '') {
+    public function head($title, $styleArray = '', $scriptArray = '') {
         $title = APPLICATION_TITLE . $title;
         $head = '';
         $head .= '<!doctype html>
@@ -28,8 +27,10 @@ class ApplicationWebPage {
                 $head .= '<link rel="stylesheet" href="html/' . $stlye . '">';
             }
         }
-        if (isset($script)) {
-            $head .= '<script type="text/javascript">' . $script . '</script>';
+        if (sizeof($scriptArray) >= 1) {
+            foreach ($scriptArray as $script) {
+                $head .= '<script type="text/javascript" src="' . $script . '"></script>';
+            }
         }
         $head .= '</head> ';
 
@@ -40,21 +41,21 @@ class ApplicationWebPage {
         $home = $about = $search = $acc = $nav = '';
 
         if ($currentBranch == "home") {
-            $home = 'class="selected"';
+            $home = ' class="selected"';
         } elseif ($currentBranch == "about") {
-            $about = 'class="selected"';
+            $about = ' class="selected"';
         } elseif ($currentBranch == "search") {
-            $search = 'class="selected"';
+            $search = ' class="selected"';
         } elseif ($currentBranch == "account") {
-            $acc = 'class="selected"';
+            $acc = ' class="selected"';
         }
 
         $nav .= '<nav>
                 <ul>
-                    <li ' . $home . ' ><a href="home.php">Home</a></li>
-                    <li ' . $about . ' ><a href="about.php">About</a></li>
-                    <li ' . $search . ' ><a href="search.php">Search</a></li>
-                    <li ' . $acc . ' ><a href="account.php">My Account</a></li>
+                    <li' . $home . '><a href="home.php">Home</a></li>
+                    <li' . $about . '><a href="about.php">About</a></li>
+                    <li' . $search . '><a href="search.php">Search</a></li>
+                    <li' . $acc . '><a href="account.php">My Account</a></li>
                 </ul>
              </nav>';
 
@@ -68,7 +69,7 @@ class ApplicationWebPage {
         foreach ($breadArray as $link => $value) {
             if ($link == 0) {
                 $breadcrumbs .= '<a href="' . $link . '">' . $value . '</a> / ';
-            } elseif($link == 1)  {
+            } elseif ($link == 1) {
                 $breadcrumbs .= '<a class="red" href="' . $link . '">' . $value . '</a>';
             }
         }
@@ -81,10 +82,9 @@ class ApplicationWebPage {
     public function body(ApplicationWebBody $bodyObject) {
         $body = '';
         if (is_object($bodyObject)) {
-            $body .= '<header>
-                <h1>' . APPLICATION_HEADER . '</h1>
-              </header>';
-            $body .= AccountFunctions::displayUser();
+            $body .= '<header class=title>
+                <h1>' . APPLICATION_HEADER . '</h1>' .
+                    AccountFunctions::displayUser() . ' </header>';
             $body .= $this->navigation($bodyObject->getCurrentBranch());
             $body .= $this->breadcrumbs($bodyObject->getbreadArray());
             $body .= '<div id="contentWrapper">';
@@ -96,7 +96,7 @@ class ApplicationWebPage {
             $body .= $this->rightSidebar($bodyObject->getRightTitle(), $bodyObject->getRightContentLinks());
             $body .='</div> ';
         }
-        return $body; 
+        return $body;
     }
 
     /**
