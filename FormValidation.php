@@ -21,7 +21,7 @@ class FormValiadation {
     public $confpassword;
     private $recaptcha_challenge_field;
     private $recaptcha_response_field;
-    
+    public $errors = array();
 
     public function __construct($email, $confemail, $fname, $sname, $pass, $confpass, $rcf, $rrf) {
         $this->email = $email;
@@ -36,16 +36,21 @@ class FormValiadation {
 
     public function validateEmail() {
         $this->validateConfirmEmail();
-        return preg_match('/^(("[\w-+\s]+")|([\w-+]+(?:\.[\w-+]+)*)|("[\w-+\s]+")([\w-+]+(
+        if (preg_match('/^(("[\w-+\s]+")|([\w-+]+(?:\.[\w-+]+)*)|("[\w-+\s]+")([\w-+]+(
             ?:\.[\w-+]+)*))(@((?:[\w-+]+\.)*\w[\w-+]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2}
             )?)$)|(@\[?((25[0-5]\.|2[0-4][\d]\.|1[\d]{2}\.|[\d]{1,2}\.))((25[0-5]|2
             [0-4][\d]|1[\d]{2}|[\d]{1,2})\.){2}(25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2}
-            )\]?$)/i', $this->email);
+            )\]?$)/i', $this->email)) {
+            return true;
+        } else {
+            $errors[] = 'Email is not a valid email address!';
+            return false;
+        }
     }
 
     public function validateConfirmEmail() {
         if ($this->email != $this->confemail) {
-            echo 'emails do not match';
+            $errors[] = 'Confirmation email does not match!';
             return false;
         } else
             return true;
@@ -53,7 +58,7 @@ class FormValiadation {
 
     public function validateFirstname() {
         if (strlen($this->firstname) < 4) {
-            echo 'firstname is too short';
+            $errors[] = 'Firstname must have more than 4 letters!';
             return false;
         } else
             return true;
@@ -61,7 +66,7 @@ class FormValiadation {
 
     public function validateSurname() {
         if (strlen($this->surname) < 4) {
-            echo 'surname is too short';
+            $errors[] = 'Surname must have more than 4 letters!';
             return false;
         } else
             return true;
@@ -69,7 +74,7 @@ class FormValiadation {
 
     public function validatePassword() {
         if (strlen($this->password) < 5) {
-            echo 'password is too short';
+            $errors[] = 'Password must have more than 5 characters!';
             return false;
         } else
             $this->validateConfirmPassword();
@@ -78,38 +83,38 @@ class FormValiadation {
 
     public function validateConfirmPassword() {
         if ($this->password != $this->confpassword) {
-            echo 'passwords do not match';
+            $errors[] = 'Confirmation password does not match!';
             return false;
         } elseif (strlen($this->confpassword) < 5) {
-            echo 'confirm password is too short';
+            $errors[] = 'Confirmation password must have more than 5 characters!';
             return false;
         } else
             return true;
     }
-    
-    public function validateReCAPTCHA(){
-        require_once('recaptchalib.php');
-        $privatekey = "6LeLe84SAAAAADjNcGS0Nom1QrYlkmlBJHL-5T23";
-        $resp = recaptcha_check_answer($privatekey, $_SERVER["REMOTE_ADDR"],
-                $this->recaptcha_challenge_field, $this->recaptcha_response_field);
 
-        if (!$resp->is_valid) {
-            // What happens when the CAPTCHA was entered incorrectly
-            echo "The reCAPTCHA wasn't entered correctly. Go back and try it again." .
-                    "(reCAPTCHA said: " . $resp->error . ")";
-            return false;
-        } else {
-            return true;
+    public function validateReCAPTCHA() {
+        if ($this->recaptcha_challenge_field && $this->recaptcha_response_field != "") {
+            require_once('recaptchalib.php');
+            $privatekey = "6LeLe84SAAAAADjNcGS0Nom1QrYlkmlBJHL-5T23";
+            $resp = recaptcha_check_answer($privatekey, $_SERVER["REMOTE_ADDR"], $this->recaptcha_challenge_field, $this->recaptcha_response_field);
+
+            if (!$resp->is_valid) {
+                // What happens when the CAPTCHA was entered incorrectly
+                $errors[] = 'The reCAPTCHA wasn\'t entered correctly. Go back and try it again.';
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 
     public function validateForm() {
         if ($this->validateEmail() && $this->validateFirstname()
-                && $this->validateSurname() && $this->validatePassword() &&
-                $this->validateReCAPTCHA()) {
+                && $this->validateSurname() && $this->validatePassword()) {
             return true;
         } else
-            return false;
+            print_r($this->$errors);
+        return false;
     }
 
 }

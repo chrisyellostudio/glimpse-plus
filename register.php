@@ -13,11 +13,11 @@ include 'FormValidation.php';
 class register {
 
     public static function registerUser() {
-        $script = 'http://code.jquery.com/jquery-1.7.1.min.js';
+        $script = array('http://code.jquery.com/jquery-1.7.1.min.js', 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js');
         $s = new APIFunctions();
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register');
-        $bodyContent = '<form class="register" name="register" action="register.php?validate" method="post">
+        $bodyContent = '<form class="register" name="register" action="register.php?2" method="post">
                 <table border="0">
                 <tr>
                     <td class=label><label for="email">Email: </label></td>
@@ -56,8 +56,14 @@ class register {
                     <td class=validation><span class=validpass2 text></span></td>
                 </tr>       
                 </table>
-                    <script type="text/javascript"
-                        src="http://www.google.com/recaptcha/api/challenge?k=6LeLe84SAAAAANau1wtRtkCrZxxVo_PGHN04SCvp">
+                <div id="captcha">
+                    <script type="text/javascript">
+                            Recaptcha.create("6Ld4iQsAAAAAAM3nfX_K0vXaUudl2Gk0lpTF3REf", "captcha", {
+                           
+                            tabindex: 1,
+                            theme: "clean",
+                            callback: Recaptcha.focus_response_field
+                        });
                     </script>
                     <noscript>
                         <iframe src="http://www.google.com/recaptcha/api/noscript?k=6LeLe84SAAAAANau1wtRtkCrZxxVo_PGHN04SCvp"
@@ -65,6 +71,7 @@ class register {
                         <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
                         <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
                     </noscript>
+                </div>
                 <input class="submit right" type="submit" value="Continue > " />
                 </form>
         <script type="text/javascript" src="validate.js"></script>';
@@ -81,25 +88,84 @@ class register {
     }
 
     public static function verifyFirstPage() {
-        $email = $_POST['email'];
-        $confemail = $_POST['confemail'];
-        $fname = $_POST['firstname'];
-        $sname = $_POST['surname'];
-        $pass = $_POST['password'];
-        $confpass = $_POST['confpassword'];
-        $rcf = $_POST['recaptcha_challenge_field'];
-        $rrf = $_POST['recaptcha_response_field'];
-        $s = new FormValiadation($email, $confemail, $fname, $sname, $pass, $confpass, $rcf, $rrf);
-        if ($s->validateForm()) {
-            header('Location: registerlocation.php');
+        if (isset($_POST['email']) && isset($_POST['confemail']) &&
+                isset($_POST['firstname']) && isset($_POST['password']) &&
+                isset($_POST['confpassword']) && isset($_POST['recaptcha_challenge_field'])
+                && isset($_POST['recaptcha_response_field'])) {
+            $email = $_POST['email'];
+            $confemail = $_POST['confemail'];
+            $fname = $_POST['firstname'];
+            $sname = $_POST['surname'];
+            $pass = $_POST['password'];
+            $confpass = $_POST['confpassword'];
+            $rcf = $_POST['recaptcha_challenge_field'];
+            $rrf = $_POST['recaptcha_response_field'];
+
+            $s = new FormValiadation($email, $confemail, $fname, $sname, $pass, $confpass, $rcf, $rrf);
+            if ($s->validateForm()) {
+                register::locationchoice();
+            }
         } else {
-            echo 'failed verification';
-        };
+            header('Location: register.php');
+        }
+    }
+
+    public static function locationchoice() {
+        $s = new APIFunctions();
+        $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
+        $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register');
+        $bodyContent = '<form method="POST" action="register.php">
+                        <ul>
+                            <li><input id=auto name=auto type=radio>
+                            <label for=auto>Auto-detect using my IP Address!</label></li>
+                            <li><input id=select name=select type=radio>
+                            <label for=select>Select current location from Google Maps</label></li>
+                            <li><input id=nostore name=nostore type=radio>
+                            <label for=nostore>Don\'t store my location.</label></li>
+                        </ul>
+                        <input class="submit right" type="submit" value="Continue > " />
+                        </form>';
+
+        $body = new ApplicationWebBody('Register Location', $bodyContent);
+        $body->setCurrentBranch('account');
+        $body->setbreadArray($currentLocation);
+        $body->setRightContentLinks($links);
+
+        $page = new ApplicationWebPage();
+        echo $page->head('Register Location');
+        echo $page->body($body);
+        echo $page->footer();
+    }
+
+    public static function registerlocation() {
+        $s = new APIFunctions();
+        $script = array('googlemapcanvas.js', '//maps.googleapis.com/maps/api/js?sensor=false&libraries=places');
+        $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
+        $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register',
+            'registerlocation.php' => 'Location');
+        $bodyContent = '<form method="POST" action="location.php">
+                            <input id="searchTextField" required="true" type="text" size="50"
+                            title="Enter a valid address from the drop down menu" 
+                            placeholder="Enter your location..." name="location">
+                            <button id="start" onclick="<script>initialize();</script>">This is my location!</button> 
+                        </form>
+                        <div id="map_canvas"></div><br/>
+                        <script>google.maps.event.addDomListener(window, "load", initialize);</script>';
+
+        $body = new ApplicationWebBody('Register Location', $bodyContent);
+        $body->setCurrentBranch('account');
+        $body->setbreadArray($currentLocation);
+        $body->setRightContentLinks($links);
+
+        $page = new ApplicationWebPage();
+        echo $page->head('Register Location', '', $script);
+        echo $page->body($body);
+        echo $page->footer();
     }
 
 }
 
-if (isset($_GET['validate'])) {
+if (isset($_GET['2'])) {
     register::verifyFirstPage();
 } else {
     register::registerUser();

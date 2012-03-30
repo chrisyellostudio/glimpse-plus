@@ -14,7 +14,7 @@ define("DEFAULT_STYLE", 'styles.css');
 
 class ApplicationWebPage {
 
-    public function head($title, $styleArray = '', $scriptArray = '') {
+    public function head($title, $styleArray = array(), $scriptArray = array()) {
         $title = APPLICATION_TITLE . $title;
         $head = '';
         $head .= '<!doctype html>

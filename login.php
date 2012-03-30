@@ -13,7 +13,7 @@ class login {
 
     public static function logmein() {
         $s = new APIFunctions();
-        $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
+        $links = array('home.php' => 'Home', 'about.php' => 'About', 'search.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'login.php' => 'Login');
         $bodyContent = '<form class="login" method="post" action="login.php">
                     <div class="login">

@@ -63,7 +63,7 @@ function validateSurname(){
 
 function validatePassword(){
     if(password.val().length < 5){
-        passwordvalidation.text("Password must be at least 5 characters'");
+        passwordvalidation.text("Password must be at least 5 characters");
         return false;
     }
     //it's valid

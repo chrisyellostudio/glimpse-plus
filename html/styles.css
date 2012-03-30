@@ -163,7 +163,7 @@ footer{
     padding-top:50px;
     text-align: center;
     font-weight: bold;
-    text-shadow: 2px 2px 2px #BBB;
+    color: #666;
 }
 
 .helptip {
@@ -203,7 +203,7 @@ footer{
 
 #contentWrapper {
     display: table;
-    padding-top: 200px;
+    padding-top: 20px;
 }
 
 .content {
@@ -445,7 +445,7 @@ hr {
 }
 
 .currentlocation {
-    position: absolute;
+
     padding-top: 100px;
     font-size: 1.5em;
     text-transform: uppercase;
@@ -589,6 +589,17 @@ td.validation {
 
 #map_canvas {
     height: 400px;
-    width: 600px;
-    margin-top: 0.6em;
+    width: 90%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+ul{
+    list-style: none;
+}
+
+#captcha{
+    padding-top: 20px 0 20px 0;
 }
