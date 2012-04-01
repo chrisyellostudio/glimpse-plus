@@ -12,6 +12,26 @@ include 'FormValidation.php';
 
 class register {
 
+    public static function complete() {
+        //TODO finalise registration process
+    }
+
+    public static function verifySecondPage() {
+        if (isset($_POST['location'])) {
+            if ($_POST['location'] == 'select') { //Show Google Maps page
+                register::registerlocation();
+            } elseif ($_POST['location'] == 'auto') {
+                register::complete();
+            } elseif ($_POST['location'] == 'nostore') {
+                register::complete();
+            } else {
+                header('Location: register.php?2');
+            }
+        } else {
+            header('Location: register.php?2');
+        }
+    }
+
     public static function registerUser() {
         $script = array('http://code.jquery.com/jquery-1.7.1.min.js', 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js');
         $s = new APIFunctions();
@@ -114,13 +134,13 @@ class register {
         $s = new APIFunctions();
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register');
-        $bodyContent = '<form method="POST" action="register.php">
+        $bodyContent = '<form method="POST" action="register.php?3">
                         <ul>
-                            <li><input id=auto name=auto type=radio>
+                            <li><input id="auto" name="location" value="auto" type="radio">
                             <label for=auto>Auto-detect using my IP Address!</label></li>
-                            <li><input id=select name=select type=radio>
+                            <li><input id="select" name="location" value="select" type="radio">
                             <label for=select>Select current location from Google Maps</label></li>
-                            <li><input id=nostore name=nostore type=radio>
+                            <li><input id="nostore" name="location" value="nostore" type="radio">
                             <label for=nostore>Don\'t store my location.</label></li>
                         </ul>
                         <input class="submit right" type="submit" value="Continue > " />
@@ -167,6 +187,8 @@ class register {
 
 if (isset($_GET['2'])) {
     register::verifyFirstPage();
+} elseif (isset($_GET['3'])) {
+    register::verifySecondPage();
 } else {
     register::registerUser();
 }
