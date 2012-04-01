@@ -17,19 +17,20 @@ body {
 }
 
 h2 {
-    font-size: 28px;
+    font-size: 1.5em;
     line-height: 44px;
-    padding: 22px 0;
+    padding: 11px 0;
 }
 
 h3 {
-    font-size: 18px;
+    font-size: 1em;
     line-height: 22px;
     padding: 11px 0;
 }
 
 p {
-    padding-bottom: 22px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 nav {
@@ -223,6 +224,7 @@ footer{
 }
 
 .content h1{
+    font-size: 2em;
     padding: 10px 0 10px 0;
     color: steelblue;
 }
