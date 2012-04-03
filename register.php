@@ -21,6 +21,11 @@ class register {
             if ($_POST['location'] == 'select') { //Show Google Maps page
                 register::registerlocation();
             } elseif ($_POST['location'] == 'auto') {
+                if (isset($_SESSION['country'])) {
+                    if (in_array($_SESSION['country'], $availcountries)) {
+                        
+                    }
+                }
                 register::complete();
             } elseif ($_POST['location'] == 'nostore') {
                 register::complete();
@@ -123,10 +128,26 @@ class register {
 
             $s = new FormValiadation($email, $confemail, $fname, $sname, $pass, $confpass, $rcf, $rrf);
             if ($s->validateForm()) {
-                register::locationchoice();
+                register::verifyUser();
             }
         } else {
             header('Location: register.php');
+        }
+    }
+
+    /**
+     * 
+     */
+    public static function verifyUser() {
+        if ($result) {
+            $to = htmlspecialchars(stripslashes(strip_tags($email)));
+            $subject = '';
+            $header = '';
+            $message = '';
+
+            $mail_result = mail($to, $subject, $message, $header);
+        } else {
+            $this->errors[] = 'Failed to send email, no user ';
         }
     }
 
@@ -189,7 +210,9 @@ if (isset($_GET['2'])) {
     register::verifyFirstPage();
 } elseif (isset($_GET['3'])) {
     register::verifySecondPage();
-} else {
+} elseif(isset($_GET['auth'])){
+    register::verifyUser();
+}else {
     register::registerUser();
 }
 ?>
