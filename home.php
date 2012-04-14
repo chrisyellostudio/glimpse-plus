@@ -27,7 +27,7 @@ class home {
         $body->setRightContentLinks($links);
 
         $page = new ApplicationWebPage();
-        echo $page->head('Home', '', $scripts);
+        echo $page->head('Home');
         echo $page->body($body);
         echo $page->footer();
     }
