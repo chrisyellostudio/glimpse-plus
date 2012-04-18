@@ -43,53 +43,58 @@ class FormValiadation {
             )\]?$)/i', $this->email)) {
             return true;
         } else {
-            $errors[] = 'Email is not a valid email address!';
+            array_push($this->errors, 'Email is not a valid email address!');
             return false;
         }
     }
 
     public function validateConfirmEmail() {
         if ($this->email != $this->confemail) {
-            $errors[] = 'Confirmation email does not match!';
+            array_push($this->errors, 'Confirmation email does not match!');
             return false;
-        } else
+        } else {
             return true;
+        }
     }
 
     public function validateFirstname() {
         if (strlen($this->firstname) < 4) {
-            $errors[] = 'Firstname must have more than 4 letters!';
+            array_push($this->errors, 'Firstname must have more than 4 letters!');
             return false;
-        } else
+        } else {
             return true;
+        }
     }
 
     public function validateSurname() {
-        if (strlen($this->surname) < 4) {
-            $errors[] = 'Surname must have more than 4 letters!';
+        if (strlen($this->surname) > 4) {
+            array_push($this->errors, 'Surname must have more than 4 letters!');
             return false;
-        } else
+        } else {
             return true;
+        }
     }
 
     public function validatePassword() {
         if (strlen($this->password) < 5) {
-            $errors[] = 'Password must have more than 5 characters!';
+            array_push($this->errors, 'Password must have more than 5 characters!');
             return false;
-        } else
+        } else {
             $this->validateConfirmPassword();
-        return true;
+            return true;
+        }
     }
 
     public function validateConfirmPassword() {
         if ($this->password != $this->confpassword) {
-            $errors[] = 'Confirmation password does not match!';
+            array_push($this->errors, 'Confirmation password does not match!');
             return false;
         } elseif (strlen($this->confpassword) < 5) {
-            $errors[] = 'Confirmation password must have more than 5 characters!';
+            array_push($this->errors, 'Confirmation password must have more than 5 characters!');
             return false;
-        } else
+        } else {
             return true;
+        }
     }
 
     public function validateReCAPTCHA() {
@@ -99,8 +104,8 @@ class FormValiadation {
             $resp = recaptcha_check_answer($privatekey, $_SERVER["REMOTE_ADDR"], $this->recaptcha_challenge_field, $this->recaptcha_response_field);
 
             if (!$resp->is_valid) {
-                // What happens when the CAPTCHA was entered incorrectly
-                $errors[] = 'The reCAPTCHA wasn\'t entered correctly. Go back and try it again.';
+                // What happens when the CAPTCHA is entered incorrectly
+                array_push($this->errors, 'The reCAPTCHA wasn\'t entered correctly. Go back and try it again.');
                 return false;
             } else {
                 return true;
@@ -110,11 +115,24 @@ class FormValiadation {
 
     public function validateForm() {
         if ($this->validateEmail() && $this->validateFirstname()
-                && $this->validateSurname() && $this->validatePassword()) {
+                && $this->validateSurname() && $this->validatePassword()
+                && $this->validateReCAPTCHA()) {
+            print '
+                validateEmail returned: ' . $this->validateEmail() . '!
+                validateFirstName returned: ' . $this->validateFirstname() . '!
+                validateEmail returned: ' . $this->validateSurname() . '!
+                validateEmail returned: ' . $this->validatePassword() . '!
+                validateEmail returned: ' . $this->validateReCAPTCHA() . '!';
             return true;
-        } else
-            print_r($this->$errors);
-        return false;
+        } else {
+            return $this->returnErrors();
+        }
+    }
+
+    public function returnErrors() {
+        if (sizeof($this->errors) > 0) {
+            return $this->errors;
+        }
     }
 
 }

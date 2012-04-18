@@ -22,9 +22,9 @@ class ApplicationWebPage {
                     <head>
                         <title>' . $title . '</title>
                         <link rel="stylesheet" href="html/' . DEFAULT_STYLE . '">';
-        if (sizeof($styleArray) > 1) {
+        if (sizeof($styleArray) >= 1) {
             foreach ($styleArray as $style) {
-                $head .= '<link rel="stylesheet" href="html/' . $stlye . '">';
+                $head .= '<link rel="stylesheet" href="html/' . $style . '">';
             }
         }
         if (sizeof($scriptArray) >= 1) {

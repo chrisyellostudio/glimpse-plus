@@ -15,10 +15,14 @@ class Application {
      * @param string $base_dir 
      */
     const BASE_DIR = '/';
+    const APP_DIR = 'app';
+    const HELP_DIR = '';
+    const LIBS_DIR = '';
+    
 
     public $availcountries = array('US', 'GB', 'AU', 'DE', 'FR', 'JP', 'CN', 'IT', 'NL', 'ES');
     public $countrycurrencycode = array('US' => 'USD', 'GB' => 'GBP', 'AU' => 'AUD', 'DE' => 'EUR', 'FR' => 'EUR',
-        'JP' => 'JPY', 'JP' => 'HKD', 'CN' => 'CNY', 'IT' => 'EUR', 'NL' => 'EUR', 'ES' => 'EUR');
+        'JP' => 'JPY', 'CN' => 'CNY', 'IT' => 'EUR', 'NL' => 'EUR', 'ES' => 'EUR');
     public $countrycurrency = array('USD' => 'US Dollars', 'GBP' => 'British Sterling',
         'AUD' => 'Australian Dollar', 'EUR' => 'Euros', 'JP' => 'Japanese Yen', 'CNY' => 'Yuan Renminbi',
         'HKD' => 'Hong Kong Dollar');
@@ -35,8 +39,13 @@ class Application {
     
     public function constructConfig() {
         $this->base_dir = 'BASE_DIR';
+        
+        
         $this->conf['db'] = array();
         $this->conf['user'] = array();
+        
+        $this->conf['user']['countrycode'] = $this->country;
+        //TODO
     }
 
     public function debug() {
@@ -61,6 +70,7 @@ class Application {
         $_SESSION['country'] = $this->country;
         $_SESSION['ip'] = $this->ip;
         $_SESSION['currency'] = $this->getCurrency();
+        $_SESSION['auth'] = '';
     }
 
     public function getCurrency() {
@@ -68,7 +78,7 @@ class Application {
             $ccc_key = $this->countrycurrencycode[$_SESSION['countrycode']];
             return $cntry_currency = $this->countrycurrency[$ccc_key];
         } else {
-            $this->errors[] = "User country not set, requires setting manually.";
+            array_push($this->warnings, "User country not set, requires setting manually.");
         }
     }
 

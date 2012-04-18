@@ -104,6 +104,3 @@ form.submit(function(){
     else
         return false;
 });
-
-
-

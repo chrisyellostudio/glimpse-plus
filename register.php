@@ -9,26 +9,41 @@ include 'ApplicationWebBody.php';
 include 'ApplicationWebPage.php';
 include 'APIFunctions.php';
 include 'FormValidation.php';
+include 'NotificationHandler.php';
 
 class register {
 
-    public static function complete() {
+    private $script = array();
+    private $styles = array();
+    private $errors = array();
+    private $notifications;
+
+    public function __construct(){
+        $this->notifications = new NotificationHandler();
+    }
+    /**
+     * 
+     */
+    public function complete() {
         //TODO finalise registration process
     }
 
-    public static function verifySecondPage() {
+    /**
+     * 
+     */
+    public function verifySecondPage() {
         if (isset($_POST['location'])) {
             if ($_POST['location'] == 'select') { //Show Google Maps page
-                register::registerlocation();
+                $this->registerlocation();
             } elseif ($_POST['location'] == 'auto') {
                 if (isset($_SESSION['country'])) {
                     if (in_array($_SESSION['country'], $availcountries)) {
                         
                     }
                 }
-                register::complete();
+                $this->complete();
             } elseif ($_POST['location'] == 'nostore') {
-                register::complete();
+                $this->complete();
             } else {
                 header('Location: register.php?2');
             }
@@ -37,10 +52,45 @@ class register {
         }
     }
 
-    public static function registerUser() {
-        $script = array('http://code.jquery.com/jquery-1.7.1.min.js', 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js');
+    /**
+     * 
+     */
+    public function verifyFirstPage() {
+        
+        $email = $confemail = $fname = $sname = $pass = $confpass = $rcf = $rrf = '';
+       
+        if(isset($_POST['email'])){$email = $_POST['email'];}
+        if(isset($_POST['confemail'])){$confemail = $_POST['confemail'];}
+        if(isset($_POST['firstname'])){$fname = $_POST['firstname'];}
+        if(isset($_POST['surname'])){$sname = $_POST['surname'];}
+        if(isset($_POST['password'])){$pass = $_POST['password'];}
+        if(isset($_POST['confpassword'])){$confpass = $_POST['confpassword'];}
+        if(isset($_POST['recaptcha_challenge_field'])){$rcf = $_POST['recaptcha_challenge_field'];}
+        if(isset($_POST['recaptcha_response_field'])){$rrf = $_POST['recaptcha_response_field'];}
+        
+        if($email && $confemail && $fname && $sname && $pass && $confpass && $rcf && $rrf){
+            $s = new FormValiadation($email, $confemail, $fname, $sname, $pass, $confpass, $rcf, $rrf);
+            if ($s->validateForm()) {
+                if (file_exists($this->notifications->notiffile)){
+                    $this->notifications->__destroy();
+                }    
+                $this->verifyUser();
+                //insert into temp db 
+                } else {
+                    $this->notifications->createErrorNotif($s->validateForm());
+                    array_push($this->script, $this->notifications->notiffile); //Add notifications.js to scripts to run for the page
+                }
+         } else {
+             header('Location: register.php');
+         }
+    }
+
+    /**
+     * 
+     */
+    public function registerUser() {
         $s = new APIFunctions();
-        $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
+        $links = array('home.php' => 'Home', 'about.php' => 'About', 'search.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register');
         $bodyContent = '<form class="register" name="register" action="register.php?2" method="post">
                 <table border="0">
@@ -48,7 +98,7 @@ class register {
                     <td class=label><label for="email">Email: </label></td>
                     <td class=input><input class="email" type="email" maxlength="100" required="true" title="Enter your email adress" name="email" /></td>
                     <td class=validation><span class=validemail text></span></td>
-                    </tr>
+                </tr>
                 <tr>
                     <td class=label><label for="confemail">Confirm Email: </label></td>
                     <td class=input><input class="confemail" type="email" maxlength="100" autocomplete="off" required="true" title="Confirm your email address" name="confemail" /></td>
@@ -86,8 +136,7 @@ class register {
                             Recaptcha.create("6Ld4iQsAAAAAAM3nfX_K0vXaUudl2Gk0lpTF3REf", "captcha", {
                            
                             tabindex: 1,
-                            theme: "clean",
-                            callback: Recaptcha.focus_response_field
+                            theme: "clean"
                         });
                     </script>
                     <noscript>
@@ -107,51 +156,39 @@ class register {
         $body->setRightContentLinks($links);
 
         $page = new ApplicationWebPage();
-        echo $page->head('Register', '', $script);
+        array_push($this->script, 'http://code.jquery.com/jquery-1.7.1.min.js', 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js');
+        echo $page->head('Register', $this->styles, $this->script);
         echo $page->body($body);
         echo $page->footer();
-    }
-
-    public static function verifyFirstPage() {
-        if (isset($_POST['email']) && isset($_POST['confemail']) &&
-                isset($_POST['firstname']) && isset($_POST['password']) &&
-                isset($_POST['confpassword']) && isset($_POST['recaptcha_challenge_field'])
-                && isset($_POST['recaptcha_response_field'])) {
-            $email = $_POST['email'];
-            $confemail = $_POST['confemail'];
-            $fname = $_POST['firstname'];
-            $sname = $_POST['surname'];
-            $pass = $_POST['password'];
-            $confpass = $_POST['confpassword'];
-            $rcf = $_POST['recaptcha_challenge_field'];
-            $rrf = $_POST['recaptcha_response_field'];
-
-            $s = new FormValiadation($email, $confemail, $fname, $sname, $pass, $confpass, $rcf, $rrf);
-            if ($s->validateForm()) {
-                register::verifyUser();
-            }
-        } else {
-            header('Location: register.php');
-        }
     }
 
     /**
      * 
      */
-    public static function verifyUser() {
-        if ($result) {
+    public function verifyUser() {
+        //do a db check on the user - by email field
+        //pass result into result
+        //if user already exists, give option to email password if forgotten or link to login
+        //if user does not exist on the system send out an email
+        //insert data into temp_user table
+        if (false) {
             $to = htmlspecialchars(stripslashes(strip_tags($email)));
             $subject = '';
             $header = '';
             $message = '';
 
             $mail_result = mail($to, $subject, $message, $header);
-        } else {
-            $this->errors[] = 'Failed to send email, no user ';
+        } else {     
+            array_push($this->errors, 'Failed to send email, no user. Try registering again.');
+            $this->checkErrors();
+            $this->script = array_merge($this->script, $this->notifications->requiredJSFiles());
+            $this->styles = array_merge($this->styles, $this->notifications->requiredStyleFiles());
+            array_push($this->script, $this->notifications->notiffile);   
+            $this->registerUser();
         }
     }
 
-    public static function locationchoice() {
+    public function locationchoice() {
         $s = new APIFunctions();
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register');
@@ -178,7 +215,7 @@ class register {
         echo $page->footer();
     }
 
-    public static function registerlocation() {
+    public function registerlocation() {
         $s = new APIFunctions();
         $script = array('googlemapcanvas.js', '//maps.googleapis.com/maps/api/js?sensor=false&libraries=places');
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
@@ -204,15 +241,22 @@ class register {
         echo $page->footer();
     }
 
+    public function checkErrors(){
+        if(sizeof($this->errors) > 0){
+            $this->notifications->createErrorNotif($this->errors);
+        }
+    }
 }
 
+$r = new register();
+
 if (isset($_GET['2'])) {
-    register::verifyFirstPage();
+    $r->verifyFirstPage();
 } elseif (isset($_GET['3'])) {
-    register::verifySecondPage();
-} elseif(isset($_GET['auth'])){
-    register::verifyUser();
-}else {
-    register::registerUser();
+    $r->verifySecondPage();
+} elseif (isset($_GET['auth'])) {
+    $r->verifyUser();
+} else {
+    $r->registerUser();
 }
 ?>

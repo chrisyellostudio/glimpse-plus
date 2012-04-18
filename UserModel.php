@@ -27,9 +27,7 @@ class UserModel {
     
     public function deleteUser(){
         
-    }
-    
-    
+    }    
 }
 
 ?>
