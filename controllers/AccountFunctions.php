@@ -8,12 +8,17 @@
 class AccountFunctions {
 
     public $user = '';
+    private $app;
+    
+    public function __construct($application){
+        $this->app = $application;
+    }
 
     public static function checkIfUserSet() {
         if (isset($_GET['user']) == 1) {
-            return TRUE;
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 

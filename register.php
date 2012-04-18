@@ -5,11 +5,12 @@
  *
  * @author cir8 
  */
-include 'ApplicationWebBody.php';
-include 'ApplicationWebPage.php';
-include 'APIFunctions.php';
-include 'FormValidation.php';
-include 'NotificationHandler.php';
+include 'bootstrap.php';
+run();
+include $application->getDirConfig('controllers').'ApplicationWebBody.php';
+include $application->getDirConfig('controllers').'ApplicationWebPage.php';
+include $application->getDirConfig('controllers').'FormValidation.php';
+include $application->getDirConfig('controllers').'NotificationHandler.php';
 
 class register {
 
@@ -17,9 +18,12 @@ class register {
     private $styles = array();
     private $errors = array();
     private $notifications;
-
-    public function __construct(){
-        $this->notifications = new NotificationHandler();
+    public $application;
+    private $app;
+    
+    public function __construct($application){
+        $this->app = $application;
+        $this->notifications = new NotificationHandler($application);
     }
     /**
      * 
@@ -89,7 +93,7 @@ class register {
      * 
      */
     public function registerUser() {
-        $s = new APIFunctions();
+
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'search.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register');
         $bodyContent = '<form class="register" name="register" action="register.php?2" method="post">
@@ -148,14 +152,14 @@ class register {
                 </div>
                 <input class="submit right" type="submit" value="Continue > " />
                 </form>
-        <script type="text/javascript" src="validate.js"></script>';
+        <script type="text/javascript" src="'.$this->app->getDirConfig('libs').'validate.js"></script>';
 
-        $body = new ApplicationWebBody('My Account', $bodyContent);
+        $body = new ApplicationWebBody($this->app,'My Account', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
 
-        $page = new ApplicationWebPage();
+        $page = new ApplicationWebPage($this->app);
         array_push($this->script, 'http://code.jquery.com/jquery-1.7.1.min.js', 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js');
         echo $page->head('Register', $this->styles, $this->script);
         echo $page->body($body);
@@ -189,7 +193,7 @@ class register {
     }
 
     public function locationchoice() {
-        $s = new APIFunctions();
+
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register');
         $bodyContent = '<form method="POST" action="register.php?3">
@@ -204,19 +208,19 @@ class register {
                         <input class="submit right" type="submit" value="Continue > " />
                         </form>';
 
-        $body = new ApplicationWebBody('Register Location', $bodyContent);
+        $body = new ApplicationWebBody($this->app,'Register Location', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
 
-        $page = new ApplicationWebPage();
+        $page = new ApplicationWebPage($this->app);
         echo $page->head('Register Location');
         echo $page->body($body);
         echo $page->footer();
     }
 
     public function registerlocation() {
-        $s = new APIFunctions();
+
         $script = array('googlemapcanvas.js', '//maps.googleapis.com/maps/api/js?sensor=false&libraries=places');
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'searh.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'register.php' => 'Register',
@@ -230,13 +234,13 @@ class register {
                         <div id="map_canvas"></div><br/>
                         <script>google.maps.event.addDomListener(window, "load", initialize);</script>';
 
-        $body = new ApplicationWebBody('Register Location', $bodyContent);
+        $body = new ApplicationWebBody($this->app,'Register Location', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
 
-        $page = new ApplicationWebPage();
-        echo $page->head('Register Location', '', $script);
+        $page = new ApplicationWebPage($this->app);
+        echo $page->head('Register Location', array(), $script);
         echo $page->body($body);
         echo $page->footer();
     }
@@ -248,7 +252,7 @@ class register {
     }
 }
 
-$r = new register();
+$r = new register($application);
 
 if (isset($_GET['2'])) {
     $r->verifyFirstPage();

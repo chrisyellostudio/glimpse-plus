@@ -5,12 +5,18 @@
  *
  * @author cir8
  */
-include 'ApplicationWebBody.php';
-include 'ApplicationWebPage.php';
+include 'bootstrap.php';
+run();
+include $application->getDirConfig('controllers') . 'ApplicationWebBody.php';
+include $application->getDirConfig('controllers') . 'ApplicationWebPage.php';
 
 class home {
 
-    public static function createPage() {
+    private $app;
+
+    public function __construct($application) {
+        $this->app = $application;
+
         $links = array('intro.php' => 'Introduction',
             'tour.php' => 'Guided Tour');
         $currentLocation = array('home.php' => 'Home');
@@ -21,12 +27,12 @@ class home {
         <h2>Hello</h2>
         <p>Something else goes down here...</p>';
 
-        $body = new ApplicationWebBody('Home', $bodyContent);
+        $body = new ApplicationWebBody($this->app, 'Home', $bodyContent);
         $body->setCurrentBranch('home');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
 
-        $page = new ApplicationWebPage();
+        $page = new ApplicationWebPage($this->app);
         echo $page->head('Home');
         echo $page->body($body);
         echo $page->footer();
@@ -35,4 +41,4 @@ class home {
 }
 
 session_start();
-home::createPage();
+new home($application);

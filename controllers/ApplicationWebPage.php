@@ -14,6 +14,12 @@ define("DEFAULT_STYLE", 'styles.css');
 
 class ApplicationWebPage {
 
+    private $app;
+
+    public function __construct($application) {
+        $this->app = $application;
+    }
+
     public function head($title, $styleArray = array(), $scriptArray = array()) {
         $title = APPLICATION_TITLE . $title;
         $head = '';
@@ -21,10 +27,11 @@ class ApplicationWebPage {
                 <html>
                     <head>
                         <title>' . $title . '</title>
-                        <link rel="stylesheet" href="html/' . DEFAULT_STYLE . '">';
+                        <link rel="icon" type="image/x-icon" href="'. $this->app->getDirConfig('imgs') .'favicon.ico" />
+                        <link rel="stylesheet" href="' . $this->app->getDirConfig('styles') . DEFAULT_STYLE . '">';
         if (sizeof($styleArray) >= 1) {
             foreach ($styleArray as $style) {
-                $head .= '<link rel="stylesheet" href="html/' . $style . '">';
+                $head .= '<link rel="stylesheet" href="' . $this->app->getDirConfig('styles') . $style . '">';
             }
         }
         if (sizeof($scriptArray) >= 1) {

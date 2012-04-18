@@ -1,34 +1,36 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of about
  *
  * @author cir8
  */
-
-include 'ApplicationWebBody.php';
-include 'ApplicationWebPage.php';
+include 'bootstrap.php';
+run();
+include $application->getDirConfig('controllers') . 'ApplicationWebBody.php';
+include $application->getDirConfig('controllers') . 'ApplicationWebPage.php';
 
 class about {
-    public static function createPage(){        
 
-        $currentLocation = array('about.php'=>'About');
+    private $app;
+
+    public function __construct($application) {
+        $this->app = $application;
+
+        $currentLocation = array('about.php' => 'About');
         $bodyContent = '';
-        
-        $body = new ApplicationWebBody('About',$bodyContent);
+
+        $body = new ApplicationWebBody($this->app, 'About', $bodyContent);
         $body->setCurrentBranch('about');
         $body->setbreadArray($currentLocation);
-        
-        $page = new ApplicationWebPage();
+
+        $page = new ApplicationWebPage($this->app);
         echo $page->head('About');
         echo $page->body($body);
         echo $page->footer();
     }
+
 }
+
 session_start();
-about::createPage();
+new About($application);

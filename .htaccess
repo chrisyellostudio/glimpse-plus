@@ -1,0 +1,16 @@
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+<FilesMatch "controllers\/([a-zA-Z0-9]*).php$"> 
+order deny,allow 
+deny from all 
+</FilesMatch>
+
+
+Options -Indexes
+
+ErrorDocument 403 http://localhost/GlimPSE/403.php
+ErrorDocument 404 http://localhost/GlimPSE/404.php
+ErrorDocument 500 http://localhost/GlimPSE/500.php           

@@ -5,30 +5,35 @@
  *
  * @author cir8
  */
-include 'ApplicationWebBody.php';
-include 'ApplicationWebPage.php';
-include 'APIFunctions.php';
+include 'bootstrap.php';
+run();
+include $application->getDirConfig('controllers') . 'ApplicationWebBody.php';
+include $application->getDirConfig('controllers') . 'ApplicationWebPage.php';
 
 class account {
 
-    public static function userpage() {
-        $s = new APIFunctions();
+    private $app;
+    
+    public function __construct($application){
+        $this->app = $application;
+    }
+    public function userpage() {
         $links = array('account.php?logout' => 'Logout', 'account.php?settings' => 'My Settings');
         $currentLocation = array('account.php' => 'My Account');
         $bodyContent = 'Welcome: ' . $_SESSION['user'];
 
-        $body = new ApplicationWebBody('My Account', $bodyContent);
+        $body = new ApplicationWebBody($this->app,'My Account', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
 
-        $page = new ApplicationWebPage();
+        $page = new ApplicationWebPage($this->app);
         echo $page->head('My Account');
         echo $page->body($body);
         echo $page->footer();
     }
 
-    public static function logout() {
+    public function logout() {
         session_destroy();
         header('Location: login.php');
     }
@@ -36,13 +41,13 @@ class account {
 }
 
 session_start();
+$a = new Account();
 if (isset($_SESSION['user'])) {
-    account::userpage();
+    $a->userpage();
 } elseif (!isset($_SESSION['user'])) {
     header('Location: login.php');
-} 
-if (isset($_GET['logout'])) {
-    account::logout();
 }
-
+if (isset($_GET['logout'])) {
+    $a->logout();
+}
 ?>

@@ -5,15 +5,21 @@
  *
  * @author cir8
  */
-include 'ApplicationWebBody.php';
-include 'ApplicationWebPage.php';
-include 'APIFunctions.php';
-include 'UserModel.php';
+include 'bootstrap.php';
+run();
+include $application->getDirConfig('controllers') . 'ApplicationWebBody.php';
+include $application->getDirConfig('controllers') . 'ApplicationWebPage.php';
+include $application->getDirConfig('models') . 'UserModel.php';
 
 class login {
 
-    public static function loginpage() {
-        $s = new APIFunctions();
+    private $app;
+
+    public function __construct($application) {
+        $this->app = $application;
+    }
+
+    public function loginpage() {
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'search.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'login.php' => 'Login');
         $bodyContent = '
@@ -32,14 +38,14 @@ class login {
                 </table>
                 <input type="submit" value="Login" /><br/>
             </form>
-            <script type="text/javascript" src="validatelogin.js"></script>';
+            <script type="text/javascript" src="libs/validatelogin.js"></script>';
 
-        $body = new ApplicationWebBody('Login', $bodyContent);
+        $body = new ApplicationWebBody($this->app,'Login', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
 
-        $page = new ApplicationWebPage();
+        $page = new ApplicationWebPage($this->app);
         $scripts = array('http://code.jquery.com/jquery-1.7.1.min.js');
         echo $page->head('Login', array(), $scripts);
         echo $page->body($body);
@@ -49,7 +55,11 @@ class login {
     public function login() {
         $email = mysql_real_escape_string(stripslashes($_POST['email']));
         $password = mysql_real_escape_string(stripslashes($_POST['password']));
+        
+        $this->app->debug();
+        $this->app->setUserConfig('type','member');
 
+        /*
         //query db to see if exists
         //if so 
         $u = new UserModel();
@@ -66,16 +76,21 @@ class login {
             session_register("myusername");
             session_register("mypassword");
             header("location:login_success.php");
-        }
+        }*/
     }
 
 }
 
 session_start();
-if (isset($_POST['user'])) {
-    $_SESSION['user'] = $_POST['user'];
-    header('Location: account.php');
+$l = new Login($application);
+
+if (isset($_GET['login'])) {
+    $l->login();
+} elseif(isset($_GET['redirect'])){
+    $location = $_GET['redirect'];
+    $l->loginpage();
+ }else{
+    $l->loginpage();
 }
 
-login::loginpage();
 ?>

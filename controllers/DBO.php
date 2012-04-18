@@ -19,38 +19,34 @@ class DBO {
     private static $instance;
     private $errors = array();
     private $log = array();
+    private $app;
 
-    public function __construct($dbConfig) {
-        $this->type = $dbConfig->getDbConfig('type');
-        $this->host = $dbConfig->getDbConfig('host');
-        $this->databasename = $dbConfig->getDbConfig('name');
-        $this->username = $dbConfig->getDbConfig('user');
-        $this->password = $dbConfig->getDbConfig('pass');
-        if ($dbConfig->getDbConfig('path')) {
-            $this->path = $dbConfig->getDbConfig('path');
-        }
-        $this->tblprefix = $dbConfig->getDbConfig('tableprefix');
-        //also store copy of dbConfig object
-        $this->configuration = $dbConfig;
+    public function __construct($application) {
+        $this->app = $application;
+        $this->dbConfig();
     }
 
-    public static function getInstance() {
+    /**
+     * Creates the database config for the application.
+     * 
+     */
+    public function dbConfig() {
+        $this->type = $this->app->getDBConfig('type');
+        $this->collation = 'utf8_general_ci';
+        $this->host = 'localhost';
+        $this->databasename = 'glimpse';
+        $this->username = 'admin';
+        $this->password = 'password1';
+        $this->tblprefix = 'glimpse_';
+    }
+
+    public static function getInstance($application) {
         if (!isset(self::$instance)) {
             //Creating new instance
             $className = __CLASS__;
-            self::$instance = new $className;
+            self::$instance = new $className($application);
         }
         return self::$instance;
-    }
-
-    public function getDbConfig($setting='') {
-        if ($setting) {
-            if (isset($this->conf['db'][$setting])) {
-                return $this->conf['db'][$setting];
-            }
-        } else {
-            return $this->conf['db'];
-        }
     }
 
     /**

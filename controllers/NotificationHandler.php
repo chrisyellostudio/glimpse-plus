@@ -5,15 +5,19 @@
  *
  * @author cir8
  */
-class NotificationHandler {
-
-    public $notiffile = "notifications.js"; //default name of the notifications file.
+ class NotificationHandler {
+    
+    public $notiffile; //default name of the notifications file.
     private $notifsFileHandle;
-
+    private $app;
+    
     /**
-     * 
+     *
+     * @param object $application 
      */
-    public function __construct() {
+    public function __construct($application) {
+        $this->app = $application;
+        $this-> notiffile = $this->app->getDirConfig('libs').'notifications.js';
         $this->notifsFileHandle = fopen($this->notiffile, 'w');
         $credit = '// JGrowl JQuery via http://stanlemon.net/projects/jgrowl.html
                   (function($){

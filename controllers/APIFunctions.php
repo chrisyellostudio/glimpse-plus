@@ -6,6 +6,16 @@
 
 class APIFunctions {
 
+    private $app;
+    
+    /**
+     *
+     * @param object $application 
+     */
+    public function __construct($application){
+        $this->app = $application;
+    }
+    
     /**
      * Pretty much the overwriting of the fopens method
      * additionally it handles the parsing of the returned
@@ -54,7 +64,7 @@ class APIFunctions {
      * Checks images source
      */
     public function parseImages($link) {
-        $img_na = 'html/src/no_image.jpg';
+        $img_na = $this->app->getDirConfig('imgs').'no_image.jpg';
         if ($this->parseURL($link) <= 202) {
             $img = $link;
         } else {
@@ -81,7 +91,7 @@ class APIFunctions {
      * Creates an image gallery for the 
      */
     public function createProductGallery($obj) {
-        $image_not_found_src = 'src/no_image.jpg';
+        $image_not_found_src = $this->app->getDirConfig('imgs').'no_image.jpg';
         $gallery = '<div class="images">';
         $image_id = 1;
         $thumb_id = 1;

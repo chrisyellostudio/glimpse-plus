@@ -14,12 +14,14 @@ class ApplicationWebBody {
     public $rightTitle;
     public $rightContentLinks;
     public $leftTitle;
-    public $leftContent;    
+    public $leftContent;  
+    private $app;
     
     /*
      * Basic constructor for the application web body object.
      */
-    public function __construct($title, $bodyContent) {
+    public function __construct($application, $title, $bodyContent) {
+        $this->app = $application;
         $this->setBodyTitle($title);
         $this->setBodyContents($bodyContent);
     }

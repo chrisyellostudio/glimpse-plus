@@ -1,10 +1,5 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Creates a Form Object of the Registration form and validates it before calling
  * on the model and inserting it into the database.
@@ -117,12 +112,6 @@ class FormValiadation {
         if ($this->validateEmail() && $this->validateFirstname()
                 && $this->validateSurname() && $this->validatePassword()
                 && $this->validateReCAPTCHA()) {
-            print '
-                validateEmail returned: ' . $this->validateEmail() . '!
-                validateFirstName returned: ' . $this->validateFirstname() . '!
-                validateEmail returned: ' . $this->validateSurname() . '!
-                validateEmail returned: ' . $this->validatePassword() . '!
-                validateEmail returned: ' . $this->validateReCAPTCHA() . '!';
             return true;
         } else {
             return $this->returnErrors();

@@ -1,0 +1,9 @@
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+<FilesMatch "([a-zA-Z0-9]*).(php)$"> 
+order deny,allow 
+deny from all 
+</FilesMatch>
