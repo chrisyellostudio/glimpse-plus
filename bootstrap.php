@@ -3,14 +3,16 @@
 /**
  * @author cir8
  */
-include 'core/Application.php'; //DO NOT CHANGE!
-$application;
 
+include 'core/Application.php'; //DO NOT CHANGE!
+
+session_start();
+$application;
+    
 function run() {
     global $application;
     if (!isset($application)) {
-        $application = new Application();
-        return $application;
+        return $application = new Application();
     }
 }
 

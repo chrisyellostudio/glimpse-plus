@@ -5,8 +5,10 @@
  *
  * @author cir8
  */
+
 include 'bootstrap.php';
 run();
+
 include $application->getDirConfig('controllers') . 'ApplicationWebBody.php';
 include $application->getDirConfig('controllers') . 'ApplicationWebPage.php';
 include $application->getDirConfig('models') . 'UserModel.php';
@@ -19,11 +21,14 @@ class login {
         $this->app = $application;
     }
 
-    public function loginpage() {
+    public function loginpage($location = '') {
+         if($location != ''){
+            $location = '?redirect='.$location;
+        }
         $links = array('home.php' => 'Home', 'about.php' => 'About', 'search.php' => 'Search');
         $currentLocation = array('account.php' => 'My Account', 'login.php' => 'Login');
         $bodyContent = '
-            <form class="login" name="login" action="login.php?login" method="post"">
+            <form class="login" name="login" action="login.php?login"'.$location.' method="post"">
                 <table border="0">
                     <tr>
                         <td class=label><label for="email">Email: </label></td>
@@ -40,7 +45,7 @@ class login {
             </form>
             <script type="text/javascript" src="libs/validatelogin.js"></script>';
 
-        $body = new ApplicationWebBody($this->app,'Login', $bodyContent);
+        $body = new ApplicationWebBody($this->app, 'Login', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
@@ -52,45 +57,61 @@ class login {
         echo $page->footer();
     }
 
-    public function login() {
+    public function login($location = '') {
+
         $email = mysql_real_escape_string(stripslashes($_POST['email']));
         $password = mysql_real_escape_string(stripslashes($_POST['password']));
+
+        $this->app->debug();        
+        $this->app->setUserConfig('type', 'member');
+        $this->app->setUserConfig('name', $email);
         
-        $this->app->debug();
-        $this->app->setUserConfig('type','member');
+        if ($location != '') {
+            echo $location;
+            header('Location: ' . $location);
+        } else {
+            echo 'No location';
+            header('Location: account.php');
+        }
+
 
         /*
-        //query db to see if exists
-        //if so 
-        $u = new UserModel();
-        $u->selectUser();
-        $sql = "SELECT * FROM $tbl_name WHERE username='$myusername' and password='$mypassword'";
-        $result = mysql_query($sql);
+          //query db to see if exists
+          //if so
+          $u = new UserModel();
+          $u->selectUser();
+          $sql = "SELECT * FROM $tbl_name WHERE username='$myusername' and password='$mypassword'";
+          $result = mysql_query($sql);
 
-// Mysql_num_row is counting table row
-        $count = mysql_num_rows($result);
-// If result matched $myusername and $mypassword, table row must be 1 row
+          // Mysql_num_row is counting table row
+          $count = mysql_num_rows($result);
+          // If result matched $myusername and $mypassword, table row must be 1 row
 
-        if ($count == 1) {
-// Register $myusername, $mypassword and redirect to file "login_success.php"
-            session_register("myusername");
-            session_register("mypassword");
-            header("location:login_success.php");
-        }*/
+          if ($count == 1) {
+          // Register $myusername, $mypassword and redirect to file "login_success.php"
+          session_register("myusername");
+          session_register("mypassword");
+          header("location:login_success.php");
+          } */
     }
 
 }
 
-session_start();
+
 $l = new Login($application);
-
 if (isset($_GET['login'])) {
-    $l->login();
-} elseif(isset($_GET['redirect'])){
-    $location = $_GET['redirect'];
-    $l->loginpage();
- }else{
-    $l->loginpage();
+    if (isset($_GET['redirect'])) {
+        $location = isset($_GET['redirect']);
+    } else {
+        $location = '';
+    }
+    $l->login($location);
+} else {
+    if (isset($_GET['redirect'])) {
+        $location = isset($_GET['redirect']);
+    } else {
+        $location = '';
+    }
+    $l->loginpage($location);
 }
-
 ?>

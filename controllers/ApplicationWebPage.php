@@ -15,9 +15,11 @@ define("DEFAULT_STYLE", 'styles.css');
 class ApplicationWebPage {
 
     private $app;
+    private $acc;
 
     public function __construct($application) {
         $this->app = $application;
+        $this->acc = new AccountFunctions($application);
     }
 
     public function head($title, $styleArray = array(), $scriptArray = array()) {
@@ -91,7 +93,7 @@ class ApplicationWebPage {
         if (is_object($bodyObject)) {
             $body .= '<header class=title>
                 <h1>' . APPLICATION_HEADER . '</h1>' .
-                    AccountFunctions::displayUser() . ' </header>';
+                    $this->acc->displayUser() . ' </header>';
             $body .= $this->navigation($bodyObject->getCurrentBranch());
             $body .= $this->breadcrumbs($bodyObject->getbreadArray());
             $body .= '<div id="contentWrapper">';

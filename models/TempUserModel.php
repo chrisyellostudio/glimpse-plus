@@ -8,13 +8,13 @@ include 'DBO.php';
  * @param 
  * @author cir8
  */
-class TempUserModel {
+class TempUserModel extends DBO {
 
     private $db;
 
     public function __construct($dbConfig) {
-        $this->db = DBO::getInstance();
-    }
+        $this->db = parent::getInstance($application);
+        }
 
     public function insertTempUser($valuesArray = array()) {
         mysql_select_db($this->db->databasenamename, $this->db->connect()) or array_push($this->errors, mysql_error());

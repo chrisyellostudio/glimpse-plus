@@ -17,7 +17,7 @@ class home {
     public function __construct($application) {
         $this->app = $application;
 
-        $links = array('intro.php' => 'Introduction',
+        $links = array('about.php' => 'About',
             'tour.php' => 'Guided Tour');
         $currentLocation = array('home.php' => 'Home');
         $bodyContent = '        
@@ -40,5 +40,4 @@ class home {
 
 }
 
-session_start();
 new home($application);

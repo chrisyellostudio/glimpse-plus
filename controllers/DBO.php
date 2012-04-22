@@ -32,12 +32,12 @@ class DBO {
      */
     public function dbConfig() {
         $this->type = $this->app->getDBConfig('type');
-        $this->collation = 'utf8_general_ci';
-        $this->host = 'localhost';
-        $this->databasename = 'glimpse';
-        $this->username = 'admin';
-        $this->password = 'password1';
-        $this->tblprefix = 'glimpse_';
+        $this->collation = $this->app->getDBConfig('collation');
+        $this->host = $this->app->getDBConfig('host');
+        $this->databasename = $this->app->getDBConfig('databasename');
+        $this->username = $this->app->getDBConfig('username');
+        $this->password = $this->app->getDBConfig('password');
+        $this->tblprefix = $this->app->getDBConfig('btlprefix');
     }
 
     public static function getInstance($application) {

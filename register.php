@@ -253,7 +253,6 @@ class register {
 }
 
 $r = new register($application);
-
 if (isset($_GET['2'])) {
     $r->verifyFirstPage();
 } elseif (isset($_GET['3'])) {

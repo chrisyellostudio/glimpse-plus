@@ -17,8 +17,7 @@ class tour {
     public function __construct($application){
         $this->app = $application;
     
-        $links = array('intro.php' => 'Introduction',
-            'tour.php' => 'Guided Tour');
+        $links = array('about.php' => 'About', 'tour.php' => 'Guided Tour');
         $currentLocation = array('home.php' => 'Home', 'tour.php' => 'Guided Tour');
         $bodyContent = '';
 
@@ -34,5 +33,4 @@ class tour {
     }
 }
 
-session_start();
 new Tour($application);

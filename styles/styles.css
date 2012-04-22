@@ -34,6 +34,9 @@ p {
 }
 
 nav {
+    box-shadow: 0px 10px 20px #777;
+    -moz-box-shadow: 0px 10px 20px #777;
+    -webkit-box-shadow: 0px 10px 20px #777;
     position: absolute;
     left: 0;
     width: 100%;

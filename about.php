@@ -18,7 +18,16 @@ class about {
         $this->app = $application;
 
         $currentLocation = array('about.php' => 'About');
-        $bodyContent = '';
+        $bodyContent = '<p>This website aims to be better than the current Google
+            Product Search. Yes, that right. Better. This webiste uses Google\'s 
+            Product Search API to it\'s limits by gathering as much information 
+            about a product as possible and squishing it into a nice presentable
+            user friendly format without confusing you.
+            </p>
+            
+            <p>We aim to provide you with a website that gives you more "bang for 
+            your buck" by giving you lots of information, but in a nice friendly
+            format that\'s easy to digest';
 
         $body = new ApplicationWebBody($this->app, 'About', $bodyContent);
         $body->setCurrentBranch('about');
@@ -32,5 +41,4 @@ class about {
 
 }
 
-session_start();
 new About($application);

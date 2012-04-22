@@ -41,9 +41,9 @@ class searchresults {
     }
 
 }
-session_start();
-$s = new Searchresults($application);
-if ($_POST['searchquery'] == '') {
+
+$s = new Results($application);
+if (!isset($_POST['searchquery'])) {
     header('Location: search.php');
 } else {
     $s->createPage();
