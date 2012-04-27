@@ -138,7 +138,7 @@ div.jGrowl div.jGrowl-closer {
 
 /** Custom notifications for errors and warnings - cir8 **/
 div.jGrowl div.errors {
-	background: 			#333 url(errors.png) no-repeat;
+	background: 			#333 url(../imgs/errors.png) no-repeat;
 	background-position: left center;
 	-moz-border-radius: 	10px;
 	-webkit-border-radius:	10px;
@@ -152,7 +152,7 @@ div.jGrowl div.errors {
 }
 
 div.jGrowl div.warnings {
-	background: 			#333 url(warnings.png) no-repeat;
+	background: 			#333 url(../imgs/warnings.png) no-repeat;
 	background-position: left center;
 	-moz-border-radius: 	10px;
 	-webkit-border-radius:	10px;
@@ -169,6 +169,11 @@ div.jGrowl-message {
 	padding: 				5px 0 5px 0;
 	color: 					#fff;
 	font-size: 12px;
+}
+
+div.jGrowl-message a {
+    color: white;
+    font-weight: bold;
 }
 
 div.jGrowl div.jGrowl-closer{

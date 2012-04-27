@@ -40,9 +40,8 @@ class Application {
         $this->gi = geoip_open('libs/GeoIP.dat', GEOIP_MEMORY_CACHE);
         $this->ip = $this->checkIP($this->getIP());
         $this->constructConfig();
-        $this->setPerms();
     }
-
+    
     public function constructConfig() {
         $config = array();
         $config['user'] = array();
@@ -67,30 +66,12 @@ class Application {
         $config['db']['collation'] = 'utf8_general_ci';
         $config['db']['host'] = 'localhost';
         $config['db']['databasename'] = 'glimpse';
-        $config['db']['username'] = 'admin';
-        $config['db']['password'] = 'password1';
+        $config['db']['username'] = 'root';
+        $config['db']['password'] = '';
         $config['db']['tblprefix'] = 'glimpse_';
+        $config['db']['connect_status'] = '';
 
         $this->configuration = $config;
-    }
-
-    public function setPerms($path = '.', $level = 0 ) {
-        ///chmod perms here
-/*
-        $ignore = array('cgi-bin', '', '..');
-        $dh = @opendir($path);
-        while (false !== ($file = readdir($dh))) { // Loop through the directory 
-            if (!in_array($file, $ignore)) {
-                if (is_dir("$path/$file")) {
-                    chmod("$path/$file ",0777);
-                    $this->setPerms("$path/$file ", ($level + 1));
-                } else {
-                    chmod("$path/$file ",0777); // desired permission settings
-                }//elseif 
-            }//if in array 
-        }//while 
-
-        closedir($dh);*/
     }
 
     public function debug() {
@@ -112,7 +93,11 @@ class Application {
     public function getDBConfig($setting = '') {
         return $this->configuration['db'][$setting];
     }
-
+    
+    public function setDBConfig($setting ='', $value ='') {
+        $this->configuration['db'][$setting] = $value;
+    }
+    
     public function getIP() {
         if ($this->ip) {
             return $this->ip;
@@ -122,7 +107,9 @@ class Application {
     }
 
     public function getUserType() {
-        //check user type
+        if($this->getUserConfig('type') == ''){
+            $this->setUserConfig('type', 'guest');
+        }
     }
 
     /**
@@ -133,7 +120,7 @@ class Application {
      */
     public function checkIP($ip) {
         if ($ip == 'localhost' || '120.0.0.1') {
-            return '210.158.6.201';
+            return '91.143.93.160'; //Germany 210.158.6.201';  //JAPAN
         } elseif ($ip != 'localhost') {
             return $ip;
         } else {
@@ -175,7 +162,7 @@ class Application {
 
     public function getCurrency() {
         if ($this->getCountryCode()) {
-            return $this->countrycurrency[$this->getCountryCode()];
+            return $this->countrycurrency[$this->countrycurrencycode[$this->getCountryCode()]];
         } else {
             array_push($this->errors, "Unable to determine User's currency!");
             return false;

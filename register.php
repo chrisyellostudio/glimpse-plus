@@ -7,10 +7,11 @@
  */
 include 'bootstrap.php';
 run();
-include $application->getDirConfig('controllers').'ApplicationWebBody.php';
-include $application->getDirConfig('controllers').'ApplicationWebPage.php';
-include $application->getDirConfig('controllers').'FormValidation.php';
-include $application->getDirConfig('controllers').'NotificationHandler.php';
+include $application->getDirConfig('controllers') . 'ApplicationWebBody.php';
+include $application->getDirConfig('controllers') . 'ApplicationWebPage.php';
+include $application->getDirConfig('controllers') . 'FormValidation.php';
+include $application->getDirConfig('controllers') . 'NotificationHandler.php';
+include $application->getDirConfig('models') . 'UserModel.php';
 
 class register {
 
@@ -20,11 +21,12 @@ class register {
     private $notifications;
     public $application;
     private $app;
-    
-    public function __construct($application){
+
+    public function __construct($application) {
         $this->app = $application;
         $this->notifications = new NotificationHandler($application);
     }
+
     /**
      * 
      */
@@ -60,33 +62,49 @@ class register {
      * 
      */
     public function verifyFirstPage() {
-        
+
         $email = $confemail = $fname = $sname = $pass = $confpass = $rcf = $rrf = '';
-       
-        if(isset($_POST['email'])){$email = $_POST['email'];}
-        if(isset($_POST['confemail'])){$confemail = $_POST['confemail'];}
-        if(isset($_POST['firstname'])){$fname = $_POST['firstname'];}
-        if(isset($_POST['surname'])){$sname = $_POST['surname'];}
-        if(isset($_POST['password'])){$pass = $_POST['password'];}
-        if(isset($_POST['confpassword'])){$confpass = $_POST['confpassword'];}
-        if(isset($_POST['recaptcha_challenge_field'])){$rcf = $_POST['recaptcha_challenge_field'];}
-        if(isset($_POST['recaptcha_response_field'])){$rrf = $_POST['recaptcha_response_field'];}
-        
-        if($email && $confemail && $fname && $sname && $pass && $confpass && $rcf && $rrf){
+
+        if (isset($_POST['email'])) {
+            $email = $_POST['email'];
+        }
+        if (isset($_POST['confemail'])) {
+            $confemail = $_POST['confemail'];
+        }
+        if (isset($_POST['firstname'])) {
+            $fname = $_POST['firstname'];
+        }
+        if (isset($_POST['surname'])) {
+            $sname = $_POST['surname'];
+        }
+        if (isset($_POST['password'])) {
+            $pass = $_POST['password'];
+        }
+        if (isset($_POST['confpassword'])) {
+            $confpass = $_POST['confpassword'];
+        }
+        if (isset($_POST['recaptcha_challenge_field'])) {
+            $rcf = $_POST['recaptcha_challenge_field'];
+        }
+        if (isset($_POST['recaptcha_response_field'])) {
+            $rrf = $_POST['recaptcha_response_field'];
+        }
+
+        if ($email && $confemail && $fname && $sname && $pass && $confpass && $rcf && $rrf) {
             $s = new FormValiadation($email, $confemail, $fname, $sname, $pass, $confpass, $rcf, $rrf);
             if ($s->validateForm()) {
-                if (file_exists($this->notifications->notiffile)){
+                if (file_exists($this->notifications->notiffile)) {
                     $this->notifications->__destroy();
-                }    
+                }
                 $this->verifyUser();
                 //insert into temp db 
-                } else {
-                    $this->notifications->createErrorNotif($s->validateForm());
-                    array_push($this->script, $this->notifications->notiffile); //Add notifications.js to scripts to run for the page
-                }
-         } else {
-             header('Location: register.php');
-         }
+            } else {
+                $this->notifications->createErrorNotif($s->validateForm());
+                array_push($this->script, $this->notifications->notiffile); //Add notifications.js to scripts to run for the page
+            }
+        } else {
+            header('Location: register.php');
+        }
     }
 
     /**
@@ -152,9 +170,9 @@ class register {
                 </div>
                 <input class="submit right" type="submit" value="Continue > " />
                 </form>
-        <script type="text/javascript" src="'.$this->app->getDirConfig('libs').'validate.js"></script>';
+        <script type="text/javascript" src="' . $this->app->getDirConfig('libs') . 'validate.js"></script>';
 
-        $body = new ApplicationWebBody($this->app,'My Account', $bodyContent);
+        $body = new ApplicationWebBody($this->app, 'My Account', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
@@ -170,24 +188,42 @@ class register {
      * 
      */
     public function verifyUser() {
-        //do a db check on the user - by email field
-        //pass result into result
-        //if user already exists, give option to email password if forgotten or link to login
-        //if user does not exist on the system send out an email
-        //insert data into temp_user table
-        if (false) {
-            $to = htmlspecialchars(stripslashes(strip_tags($email)));
-            $subject = '';
-            $header = '';
-            $message = '';
+        $u = new UserModel($this->app);
+        $email = mysql_real_escape_string(stripslashes($_POST['email']));
+        $password = mysql_real_escape_string(stripslashes($_POST['password']));
 
-            $mail_result = mail($to, $subject, $message, $header);
-        } else {     
-            array_push($this->errors, 'Failed to send email, no user. Try registering again.');
-            $this->checkErrors();
+        if (!$u->checkUser($email, $password)) { //User does NOT exist on the system
+            if (file_exists($this->notifications->notiffile)) {
+                $this->notifications->__destroy();
+            }
+            //pass result into result
+            //if user already exists, give option to email password if forgotten or link to login
+            //if user does not exist on the system send out an email
+            //insert data into temp_user table
+            if (true) {
+                $to = htmlspecialchars(stripslashes(strip_tags($email)));
+                $subject = 'Welcome to GLimPSE';
+                $header = 'Something';
+                $message = ' click on the link below to complete registration:';
+
+                $mail_result = mail($to, $subject, $message, $header);
+                if($mail_result){
+                    echo 'SUCCESS!';
+                }
+            } else {
+                array_push($this->errors, 'Failed to send email, no user. Try registering again.');
+                $this->checkErrors();
+                $this->script = array_merge($this->script, $this->notifications->requiredJSFiles());
+                $this->styles = array_merge($this->styles, $this->notifications->requiredStyleFiles());
+                array_push($this->script, $this->notifications->notiffile);
+                $this->registerUser();
+            }
+        } else {
+            array_push($this->errors, 'Sorry that\'s email address has already been registered. Try again or log in here: <a href=\'login.php\'>Login</a>');
+            $this->notifications->createErrorNotif($this->errors);
             $this->script = array_merge($this->script, $this->notifications->requiredJSFiles());
             $this->styles = array_merge($this->styles, $this->notifications->requiredStyleFiles());
-            array_push($this->script, $this->notifications->notiffile);   
+            array_push($this->script, $this->notifications->notiffile);
             $this->registerUser();
         }
     }
@@ -208,7 +244,7 @@ class register {
                         <input class="submit right" type="submit" value="Continue > " />
                         </form>';
 
-        $body = new ApplicationWebBody($this->app,'Register Location', $bodyContent);
+        $body = new ApplicationWebBody($this->app, 'Register Location', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
@@ -234,7 +270,7 @@ class register {
                         <div id="map_canvas"></div><br/>
                         <script>google.maps.event.addDomListener(window, "load", initialize);</script>';
 
-        $body = new ApplicationWebBody($this->app,'Register Location', $bodyContent);
+        $body = new ApplicationWebBody($this->app, 'Register Location', $bodyContent);
         $body->setCurrentBranch('account');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
@@ -245,11 +281,12 @@ class register {
         echo $page->footer();
     }
 
-    public function checkErrors(){
-        if(sizeof($this->errors) > 0){
+    public function checkErrors() {
+        if (sizeof($this->errors) > 0) {
             $this->notifications->createErrorNotif($this->errors);
         }
     }
+
 }
 
 $r = new register($application);

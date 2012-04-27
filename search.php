@@ -5,31 +5,29 @@
  *
  * @author cir8
  */
-
 include 'bootstrap.php';
 run();
-include $application->getDirConfig('controllers').'ApplicationWebBody.php';
-include $application->getDirConfig('controllers').'ApplicationWebPage.php';
+include $application->getDirConfig('controllers') . 'ApplicationWebBody.php';
+include $application->getDirConfig('controllers') . 'ApplicationWebPage.php';
 
 class search {
+
     private $app;
-    
-    public function __construct($application){
+
+    public function __construct($application) {
         $this->app = $application;
     }
-    
-    public function checkUser(){
+
+    public function checkUser() {
         $type = $this->app->getUserConfig('type');
-        if($type == 'member'){
+        if ($type == 'member') {
             $this->createPage();
-            
-            } else {
+        } else {
             header('Location: login.php?redirect=search.php');
         }
     }
-    
+
     public function createPage() {
-        $this->app->debug();
         $links = array('advsearch.php' => 'Advanced Search',
             'searchpref.php' => 'Search Preferences');
         $currentLocation = array('search.php' => 'Search');
@@ -40,7 +38,7 @@ class search {
                     </div>
                 </form>';
 
-        $body = new ApplicationWebBody($this->app,'Search', $bodyContent);
+        $body = new ApplicationWebBody($this->app, 'Search', $bodyContent);
         $body->setCurrentBranch('search');
         $body->setbreadArray($currentLocation);
         $body->setRightContentLinks($links);
@@ -50,6 +48,7 @@ class search {
         echo $page->body($body);
         echo $page->footer();
     }
+
 }
 
 $s = new Search($application);

@@ -28,7 +28,7 @@ class AccountFunctions {
         
         if ($userset) {
             $name = $this->app->getUserConfig('name');
-            $user .= '<span class="right">Welcome<a href="account.php">' . $name . '</a>
+            $user .= '<span class="right">Welcome<a href="account.php">' . $name . '!</a>
                 | <a href="logout.php">Logout</a>';
         } else {
             $user .= '<span class="right"><a href="login.php">Login</a>

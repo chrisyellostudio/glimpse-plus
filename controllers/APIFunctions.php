@@ -17,9 +17,10 @@ class APIFunctions {
     }
     
     /**
-     * Pretty much the overwriting of the fopens method
-     * additionally it handles the parsing of the returned
-     * JSON object, default read mode is 'rb'.
+     *
+     * @param type $url
+     * @param type $mode
+     * @return type 
      */
     public function fetchJSONObject($url, $mode = 'rb') {
         $handle = fopen($url, $mode);
@@ -35,15 +36,19 @@ class APIFunctions {
     /**
      * Builds the API URL for passing into the fetcher for the JSON feed.
      * 
-     * @params $s, $c, $form
-     * @returns string
+     * @param type $s
+     * @param type $c
+     * @param type $form
+     * @param string $startIndex
+     * @param string $maxResults
+     * @return type 
      */
     public function buildAPIURL($s = '', $c = 'GB', $form = 'json', $startIndex = 1, $maxResults = 25) {
         $APIkey = 'AIzaSyAgkxANYayzTupDm-0JH-e7hgKljqyrx7E';
 
         $url = 'https://www.googleapis.com/shopping/search/v1/public/products';
         $key = '?key=' . $APIkey;
-        $country = '&country=' . $c;
+        $country = '&country=' . $this->app->getUserConfig('countrycode');
         $query = '&q=' . $s;
         $format = '&alt=' . $form;
 
@@ -61,7 +66,12 @@ class APIFunctions {
     }
 
     /**
-     * Checks images source
+     *  Parses image source.
+     * 
+     * Warning: slows down the serach substantially.
+     *
+     * @param string $link Image Link
+     * @return string Image. 
      */
     public function parseImages($link) {
         $img_na = $this->app->getDirConfig('imgs').'no_image.jpg';
@@ -74,7 +84,12 @@ class APIFunctions {
     }
 
     /**
-     * Resizes the image to standard ratios
+     * Resizes the image correctly to the $limit specified, taking aspect ratio 
+     * into account.
+     * 
+     * @param object $obj Takes in an object, with this application it will always be from the JSON object.
+     * @param int $limit Specified limit to the width of the image.
+        * @return string The returned HTML image string.
      */
     public function imageResize($obj, $limit) {
         $link = $obj->link;
@@ -136,13 +151,10 @@ class APIFunctions {
             $content .= '<div class="item">';
             if (count($result->product->images) == 1) {
                 foreach ($result->product->images as $res) {
-                    $content .= '<img src="' . $this->parseImages($res->link) . '" height="100px"/>';
+                    $content .= '<img src="' . $res->link . '" height="100px"/>';
                 }
             } else {
-                foreach ($result->product->images as $res) {
-                    $content .= '<img src="' . $this->parseImages($res->link) . '" height="100px"/>';
-                    //$content .= $this->imageResize($res, 100);
-                }
+                    $content .= '<img src="' . $res->link . '" height="100px"/>';
             }
             $content .= '<h3>' . ApplicationFunctions::shortenText($result->product->title, 60) . '</h3>';
             $content .= '<p>' . ApplicationFunctions::shortenText($result->product->description, 400) . '</p>';

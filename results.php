@@ -11,7 +11,7 @@ include $application->getDirConfig('controllers').'ApplicationWebBody.php';
 include $application->getDirConfig('controllers').'ApplicationWebPage.php';
 include $application->getDirConfig('controllers').'APIFunctions.php';
 
-class searchresults {
+class results {
     
     private $app;
     
@@ -20,7 +20,7 @@ class searchresults {
     }
 
     public function createPage() {
-        $s = new APIFunctions();
+        $s = new APIFunctions($this->app);
         $safequery = urlencode(stripslashes(($_POST['searchquery'])));
         $inputquery = $_POST['searchquery'];
 

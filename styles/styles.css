@@ -213,8 +213,8 @@ footer{
 .content {
     display: table-cell;
     width: 1200px;
-    padding-left: 20px;
-    padding-right: 10px;
+    padding: 10px 20px 10px 20px;
+
     background-color: #fff;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -229,6 +229,16 @@ footer{
 .content h1{
     font-size: 2em;
     padding: 10px 0 10px 0;
+    color: steelblue;
+}
+
+.content h2{
+    padding-bottom: 0px;
+}
+
+.content a{
+    text-decoration: none;
+    font-weight: bold;
     color: steelblue;
 }
 

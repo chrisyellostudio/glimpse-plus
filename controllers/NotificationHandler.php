@@ -21,7 +21,7 @@
         $this->notifsFileHandle = fopen($this->notiffile, 'w');
         $credit = '// JGrowl JQuery via http://stanlemon.net/projects/jgrowl.html
                   (function($){
-                  $(document).ready(function(){
+                        $(document).ready(function(){
                             ';
         fwrite($this->notifsFileHandle, $credit);
         fclose($this->notifsFileHandle); //create file and close
@@ -40,7 +40,7 @@
     public function createErrorNotif($errorArr = array()) {
         if (sizeof($errorArr) > 0) {
             if (!file_exists($this->notiffile)) {
-                $this->__construct();
+                $this->__construct($this->app);
             }
             $this->notifsFileHandle = fopen($this->notiffile, 'a'); //pointer at EOF
             $errrorInfo = '';
@@ -96,12 +96,12 @@
     }
 
     public function requiredJSFiles() {
-        $required = array('jquery-1.4.2.js','jquery.jgrowl.js');
+        $required = array(''.$this->app->getDirConfig('libs').'jquery-1.7.2.js',''.$this->app->getDirConfig('libs').'jquery.jgrowl.js');
         return $required;
     }
 
     public function requiredStyleFiles() {
-        $required = array('jquery.jgrowl2.css');
+        $required = array('jquery.jgrowl2.css');    //Styles here are taken from the styles/ directory
         return $required;
     }
 
